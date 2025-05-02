@@ -1,0 +1,21 @@
+/camera_node:
+  ros__parameters:
+    camera_info_url: package://rm_vision_bringup/config/camera_info.yaml
+    exposure_time: 2500
+    gain: 8.0
+
+/serial_driver:
+  ros__parameters:
+    timestamp_offset: -0.0025
+    device_name: /dev/ttyACM0
+    baud_rate: 115200
+    flow_control: none
+    parity: none
+    stop_bits: "1"
+
+/light_detector:
+  ros__parameters:
+    debug: true
+    binary_thres: 100
+    light.min_ratio: 0.05
+    ignore_classes: ["negative"]

@@ -1,0 +1,1 @@
+/home/blade_master/pnx/rmvision/build/hik_camera/ament_cmake_core/hik_cameraConfig.cmake

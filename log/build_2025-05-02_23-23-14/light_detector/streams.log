@@ -1,0 +1,82 @@
+[0.047s] Invoking command in '/home/blade_master/pnx/rmvision/build/light_detector': CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/home/blade_master/pnx/rmvision/install/rm_vision_bringup:/home/blade_master/pnx/rmvision/install/video_reader:/home/blade_master/pnx/rmvision/install/rm_serial_driver:/home/blade_master/pnx/rmvision/install/rm_gimbal_description:/home/blade_master/pnx/rmvision/install/rm_auto_aim_dart:/home/blade_master/pnx/rmvision/install/light_detector:/home/blade_master/pnx/rmvision/install/hik_camera:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/home/blade_master/pnx/rmvision/install/video_reader/lib:/home/blade_master/pnx/rmvision/install/rm_serial_driver/lib:/home/blade_master/pnx/rmvision/install/light_detector/lib:/home/blade_master/pnx/rmvision/install/hik_camera/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 /usr/bin/cmake /home/blade_master/pnx/rmvision/src/auto_aim/light_detector -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/blade_master/pnx/rmvision/install/light_detector
+[0.114s] -- The C compiler identification is GNU 11.4.0
+[0.351s] -- The CXX compiler identification is GNU 11.4.0
+[0.553s] -- Detecting C compiler ABI info
+[0.647s] -- Detecting C compiler ABI info - done
+[0.652s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.652s] -- Detecting C compile features
+[0.653s] -- Detecting C compile features - done
+[0.655s] -- Detecting CXX compiler ABI info
+[0.787s] -- Detecting CXX compiler ABI info - done
+[0.794s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.795s] -- Detecting CXX compile features
+[0.795s] -- Detecting CXX compile features - done
+[1.091s] -- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so   
+[1.092s] -- Found ament_cmake_auto: 1.3.11 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[1.218s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.272s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.316s] -- Looking for pthread.h
+[1.400s] -- Looking for pthread.h - found
+[1.400s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.477s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.478s] -- Found Threads: TRUE  
+[1.487s] -- Found OpenCV: /usr (found version "4.5.4") 
+[1.488s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[1.527s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.530s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.535s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.543s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.555s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.584s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.586s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[2.202s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[2.961s] -- Found FastRTPS: /opt/ros/humble/include  
+[4.215s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[5.127s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)
+[5.128s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[5.128s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[5.185s] -- g2o, OpenCV and fmt found, building light_detector
+[5.196s] -- Configuring done
+[5.212s] -- Generating done
+[5.217s] -- Build files have been written to: /home/blade_master/pnx/rmvision/build/light_detector
+[5.227s] Invoked command in '/home/blade_master/pnx/rmvision/build/light_detector' returned '0': CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/home/blade_master/pnx/rmvision/install/rm_vision_bringup:/home/blade_master/pnx/rmvision/install/video_reader:/home/blade_master/pnx/rmvision/install/rm_serial_driver:/home/blade_master/pnx/rmvision/install/rm_gimbal_description:/home/blade_master/pnx/rmvision/install/rm_auto_aim_dart:/home/blade_master/pnx/rmvision/install/light_detector:/home/blade_master/pnx/rmvision/install/hik_camera:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/home/blade_master/pnx/rmvision/install/video_reader/lib:/home/blade_master/pnx/rmvision/install/rm_serial_driver/lib:/home/blade_master/pnx/rmvision/install/light_detector/lib:/home/blade_master/pnx/rmvision/install/hik_camera/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 /usr/bin/cmake /home/blade_master/pnx/rmvision/src/auto_aim/light_detector -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/blade_master/pnx/rmvision/install/light_detector
+[5.229s] Invoking command in '/home/blade_master/pnx/rmvision/build/light_detector': CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/home/blade_master/pnx/rmvision/install/rm_vision_bringup:/home/blade_master/pnx/rmvision/install/video_reader:/home/blade_master/pnx/rmvision/install/rm_serial_driver:/home/blade_master/pnx/rmvision/install/rm_gimbal_description:/home/blade_master/pnx/rmvision/install/rm_auto_aim_dart:/home/blade_master/pnx/rmvision/install/light_detector:/home/blade_master/pnx/rmvision/install/hik_camera:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/home/blade_master/pnx/rmvision/install/video_reader/lib:/home/blade_master/pnx/rmvision/install/rm_serial_driver/lib:/home/blade_master/pnx/rmvision/install/light_detector/lib:/home/blade_master/pnx/rmvision/install/hik_camera/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/light_detector -- -j22 -l22
+[5.262s] [ 33%] [32mBuilding CXX object CMakeFiles/light_detector_node.dir/rclcpp_components/node_main_light_detector_node.cpp.o[0m
+[5.262s] [ 33%] [32mBuilding CXX object CMakeFiles/light_detector.dir/src/detector_node.cpp.o[0m
+[5.262s] [ 50%] [32mBuilding CXX object CMakeFiles/light_detector.dir/src/pnp_solver.cpp.o[0m
+[5.263s] [ 66%] [32mBuilding CXX object CMakeFiles/light_detector.dir/src/detector.cpp.o[0m
+[8.124s] [ 83%] [32m[1mLinking CXX executable light_detector_node[0m
+[8.236s] [ 83%] Built target light_detector_node
+[21.302s] [100%] [32m[1mLinking CXX shared library liblight_detector.so[0m
+[22.108s] [100%] Built target light_detector
+[22.116s] Invoked command in '/home/blade_master/pnx/rmvision/build/light_detector' returned '0': CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/home/blade_master/pnx/rmvision/install/rm_vision_bringup:/home/blade_master/pnx/rmvision/install/video_reader:/home/blade_master/pnx/rmvision/install/rm_serial_driver:/home/blade_master/pnx/rmvision/install/rm_gimbal_description:/home/blade_master/pnx/rmvision/install/rm_auto_aim_dart:/home/blade_master/pnx/rmvision/install/light_detector:/home/blade_master/pnx/rmvision/install/hik_camera:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/home/blade_master/pnx/rmvision/install/video_reader/lib:/home/blade_master/pnx/rmvision/install/rm_serial_driver/lib:/home/blade_master/pnx/rmvision/install/light_detector/lib:/home/blade_master/pnx/rmvision/install/hik_camera/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/light_detector -- -j22 -l22
+[22.117s] Invoking command in '/home/blade_master/pnx/rmvision/build/light_detector': CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/home/blade_master/pnx/rmvision/install/rm_vision_bringup:/home/blade_master/pnx/rmvision/install/video_reader:/home/blade_master/pnx/rmvision/install/rm_serial_driver:/home/blade_master/pnx/rmvision/install/rm_gimbal_description:/home/blade_master/pnx/rmvision/install/rm_auto_aim_dart:/home/blade_master/pnx/rmvision/install/light_detector:/home/blade_master/pnx/rmvision/install/hik_camera:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/home/blade_master/pnx/rmvision/install/video_reader/lib:/home/blade_master/pnx/rmvision/install/rm_serial_driver/lib:/home/blade_master/pnx/rmvision/install/light_detector/lib:/home/blade_master/pnx/rmvision/install/hik_camera/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/light_detector
+[22.121s] -- Install configuration: ""
+[22.121s] -- Execute custom install script
+[22.122s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/lib/light_detector/light_detector_node
+[22.127s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/detector.hpp
+[22.132s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/detector_node.hpp
+[22.137s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/pnp_solver.hpp
+[22.142s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/library_path.sh
+[22.146s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/library_path.dsv
+[22.151s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/lib/liblight_detector.so
+[22.156s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/package_run_dependencies/light_detector
+[22.160s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/parent_prefix_path/light_detector
+[22.165s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/ament_prefix_path.sh
+[22.169s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/ament_prefix_path.dsv
+[22.174s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/path.sh
+[22.179s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/path.dsv
+[22.184s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.bash
+[22.188s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.sh
+[22.192s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.zsh
+[22.196s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.dsv
+[22.201s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/package.dsv
+[22.206s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/packages/light_detector
+[22.210s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/rclcpp_components/light_detector
+[22.214s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/ament_cmake_export_dependencies-extras.cmake
+[22.219s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/ament_cmake_export_include_directories-extras.cmake
+[22.224s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/ament_cmake_export_libraries-extras.cmake
+[22.229s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/light_detectorConfig.cmake
+[22.234s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/light_detectorConfig-version.cmake
+[22.238s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/package.xml
+[22.244s] Invoked command in '/home/blade_master/pnx/rmvision/build/light_detector' returned '0': CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/home/blade_master/pnx/rmvision/install/rm_vision_bringup:/home/blade_master/pnx/rmvision/install/video_reader:/home/blade_master/pnx/rmvision/install/rm_serial_driver:/home/blade_master/pnx/rmvision/install/rm_gimbal_description:/home/blade_master/pnx/rmvision/install/rm_auto_aim_dart:/home/blade_master/pnx/rmvision/install/light_detector:/home/blade_master/pnx/rmvision/install/hik_camera:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/home/blade_master/pnx/rmvision/install/video_reader/lib:/home/blade_master/pnx/rmvision/install/rm_serial_driver/lib:/home/blade_master/pnx/rmvision/install/light_detector/lib:/home/blade_master/pnx/rmvision/install/hik_camera/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/light_detector

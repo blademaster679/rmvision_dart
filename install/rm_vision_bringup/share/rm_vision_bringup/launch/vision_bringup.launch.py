@@ -1,0 +1,1 @@
+/home/blade_master/pnx/rmvision/src/vision_bringup/rm_vision_bringup/launch/vision_bringup.launch.py

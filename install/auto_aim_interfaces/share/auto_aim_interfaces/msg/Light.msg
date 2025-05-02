@@ -1,0 +1,1 @@
+/home/blade_master/pnx/rmvision/src/auto_aim/auto_aim_interfaces/msg/Light.msg

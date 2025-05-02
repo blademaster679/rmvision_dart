@@ -1,0 +1,1 @@
+/home/blade_master/pnx/rmvision/build/light_detector/ament_cmake_core/light_detectorConfig-version.cmake

@@ -1,0 +1,1 @@
+/home/blade_master/pnx/rmvision/build/video_reader/ament_cmake_core/video_readerConfig-version.cmake
