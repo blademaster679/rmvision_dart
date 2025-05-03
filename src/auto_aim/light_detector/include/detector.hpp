@@ -52,8 +52,8 @@ namespace rm_auto_aim_dart
         };
         struct LightParams
         {
-            double min_minus = 20; // 调试时暂时修改为100,原来为40
-            double max_minus = 100; // 调试时暂时修改为200，原来为50
+            double min_minus = 10; // 16m 为20
+            double max_minus = 60; // 16m 为100
         };
         std::vector<Light> find_lights(const cv::Mat &color_image, const cv::Mat &binary_image); // find lights in binary image
     };

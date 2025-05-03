@@ -197,9 +197,15 @@ namespace rm_auto_aim_dart
         if (lights.empty())
         {
             RCLCPP_DEBUG_THROTTLE(
-                this->get_logger(), *get_clock(), 5000,
-                "No lights detected, waiting for next frame");
-            return; // early exit; next image will re-invoke callback
+                this->get_logger(), *get_clock(), 200,
+                "No lights detected, sending zero packet");
+            // —— 新增：无灯时持续发 distance=0, angle=0 ——
+            auto zero_msg = auto_aim_interfaces::msg::Send();
+            zero_msg.header = img_msg->header;
+            zero_msg.distance = 0.0;
+            zero_msg.angle = 0.0;
+            send_pub_->publish(zero_msg);
+            return;
         }
 
         if (pnp_solver_ != nullptr)
