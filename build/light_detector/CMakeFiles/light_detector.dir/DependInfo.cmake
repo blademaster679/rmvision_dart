@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/detector.cpp" "CMakeFiles/light_detector.dir/src/detector.cpp.o" "gcc" "CMakeFiles/light_detector.dir/src/detector.cpp.o.d"
   "/home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/detector_node.cpp" "CMakeFiles/light_detector.dir/src/detector_node.cpp.o" "gcc" "CMakeFiles/light_detector.dir/src/detector_node.cpp.o.d"
+  "/home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/kalman_filter.cpp" "CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o" "gcc" "CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o.d"
   "/home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/pnp_solver.cpp" "CMakeFiles/light_detector.dir/src/pnp_solver.cpp.o" "gcc" "CMakeFiles/light_detector.dir/src/pnp_solver.cpp.o.d"
   )
 

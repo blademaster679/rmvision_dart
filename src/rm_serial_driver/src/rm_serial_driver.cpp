@@ -42,6 +42,7 @@ namespace rm_serial_driver
     // Create Publisher
     latency_pub_ = this->create_publisher<std_msgs::msg::Float64>("/latency", 10);
     marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("/aiming_point", 10);
+    dart_pub_ = this->create_publisher<std_msgs::msg::UInt8>("current_dart_id", 10);
 
     // Detect parameter client
     detector_param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "light_detector");
@@ -104,7 +105,7 @@ namespace rm_serial_driver
 
   void RMSerialDriver::receiveData()
   {
-    // header_buf 用于读取单字节头部，buf 用于读取 mode + CRC16(2字节)
+    // 1 字节头 + (sizeof(ReceivePacket)-1) 字节数据
     std::vector<uint8_t> header_buf(1);
     std::vector<uint8_t> buf(sizeof(ReceivePacket) - 1);
 
@@ -112,64 +113,76 @@ namespace rm_serial_driver
     {
       try
       {
-        // 1) 读取包头 (vector 接口)
+        // 1) 读包头
         serial_driver_->port()->receive(header_buf);
+
         uint8_t header = header_buf[0];
-        if (header == 0xA5)
+        if (header == 0x5A)
         {
-          // 2) 读取 mode + CRC16 校验字节
+          // 2) 读 mode + dart_id + crc(2字节)
           serial_driver_->port()->receive(buf);
 
-          // 构造完整字节流: header + buf
+          // 拼成完整 raw 数据：header + buf
           std::vector<uint8_t> raw;
           raw.reserve(1 + buf.size());
           raw.push_back(header);
           raw.insert(raw.end(), buf.begin(), buf.end());
 
-          // CRC16 校验 (包含 header + mode + checksum 字节)
+          // CRC 校验：包含 header, dart_id, mode, crc
           if (crc16::Verify_CRC16_Check_Sum(raw.data(), raw.size()))
           {
-            // 直接将 raw 数据 reinterpret 为 ReceivePacket
-            const ReceivePacket *packet = reinterpret_cast<const ReceivePacket *>(raw.data());
+            // const ReceivePacket *pkt = reinterpret_cast<const ReceivePacket *>(raw.data());
+            // RCLCPP_INFO(get_logger(),
+            //             "Parsed packet -> mode=%u, dart_id=%u", pkt->mode, pkt->dart_id); 调试
+
+            // 直接 reinterpret 为我们在 packet.hpp 里定义的新版 ReceivePacket
+            const ReceivePacket *packet =
+                reinterpret_cast<const ReceivePacket *>(raw.data());
+
+            // --- 现有的 mode 处理 ---
             switch (packet->mode)
             {
             case 0:
-              RCLCPP_INFO(this->get_logger(), "Mode: Outpost (0)");
+              RCLCPP_DEBUG(get_logger(), "Mode: Outpost (0)");
               break;
             case 1:
-              RCLCPP_INFO(this->get_logger(), "Mode: Fixed (1)");
+              RCLCPP_DEBUG(get_logger(), "Mode: Fixed (1)");
               break;
             case 2:
-              RCLCPP_INFO(this->get_logger(), "Mode: Random (2)");
+              RCLCPP_DEBUG(get_logger(), "Mode: Random (2)");
               break;
             default:
-              RCLCPP_WARN(this->get_logger(), "Unknown mode: %u", packet->mode);
-              break;
+              RCLCPP_WARN(get_logger(), "Unknown mode: %u", packet->mode);
             }
+
+            // --- 新增：发布飞镖编号 dart_id ---
+            std_msgs::msg::UInt8 dart_msg;
+            dart_msg.data = packet->dart_id;
+            dart_pub_->publish(dart_msg);
+            RCLCPP_DEBUG(get_logger(),
+                         "Published current_dart_id: %u", packet->dart_id);
           }
           else
           {
-            RCLCPP_ERROR(this->get_logger(),
-                         "CRC16 error: header=0x%02X, mode=0x%02X",
-                         header, buf[0]);
+            RCLCPP_ERROR(get_logger(),
+                         "CRC16 error: header=0x%02X", header);
           }
         }
         else
         {
-          // 非法包头，限频警告
-          RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 20,
+          // 包头不对就丢弃
+          RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 20,
                                "Invalid header: 0x%02X", header);
         }
       }
       catch (const std::exception &ex)
       {
-        RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 20,
+        RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 20,
                               "Error while receiving data: %s", ex.what());
         reopenPort();
       }
     }
   }
-
   void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Send::SharedPtr msg)
   {
     RCLCPP_INFO(get_logger(),

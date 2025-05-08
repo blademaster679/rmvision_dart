@@ -295,6 +295,30 @@ src/detector_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/light_detector.dir/build.make CMakeFiles/light_detector.dir/src/detector_node.cpp.s
 .PHONY : src/detector_node.cpp.s
 
+src/kalman_filter.o: src/kalman_filter.cpp.o
+.PHONY : src/kalman_filter.o
+
+# target to build an object file
+src/kalman_filter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/light_detector.dir/build.make CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o
+.PHONY : src/kalman_filter.cpp.o
+
+src/kalman_filter.i: src/kalman_filter.cpp.i
+.PHONY : src/kalman_filter.i
+
+# target to preprocess a source file
+src/kalman_filter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/light_detector.dir/build.make CMakeFiles/light_detector.dir/src/kalman_filter.cpp.i
+.PHONY : src/kalman_filter.cpp.i
+
+src/kalman_filter.s: src/kalman_filter.cpp.s
+.PHONY : src/kalman_filter.s
+
+# target to generate assembly for a file
+src/kalman_filter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/light_detector.dir/build.make CMakeFiles/light_detector.dir/src/kalman_filter.cpp.s
+.PHONY : src/kalman_filter.cpp.s
+
 src/pnp_solver.o: src/pnp_solver.cpp.o
 .PHONY : src/pnp_solver.o
 
@@ -345,6 +369,9 @@ help:
 	@echo "... src/detector_node.o"
 	@echo "... src/detector_node.i"
 	@echo "... src/detector_node.s"
+	@echo "... src/kalman_filter.o"
+	@echo "... src/kalman_filter.i"
+	@echo "... src/kalman_filter.s"
 	@echo "... src/pnp_solver.o"
 	@echo "... src/pnp_solver.i"
 	@echo "... src/pnp_solver.s"

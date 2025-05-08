@@ -10,7 +10,6 @@
 #include <iostream>
 #include <cstdio>
 
-
 #include "auto_aim_interfaces/msg/debug_lights.hpp"
 
 namespace rm_auto_aim_dart
@@ -27,6 +26,7 @@ namespace rm_auto_aim_dart
         void drawResults(const cv::Mat &image, const cv::Point2f &center, double radius, double fitScore, bool found);
         // Debug msg;
         cv::Mat binary_image, gray_img;
+        cv::Mat green_channel;
         auto_aim_interfaces::msg::DebugLights debug_lights;
 
         // 计算拟合圆的函数
@@ -46,15 +46,24 @@ namespace rm_auto_aim_dart
             double title_angle;
             cv::Point2f top, bottom;
             cv::Point2f left, right;
+            float area;
+            float circularity;
 
         private:
             void initializeLight(const cv::Point2f &center, float radius);
         };
         struct LightParams
         {
-            double min_minus = 10; // 16m 为20
-            double max_minus = 60; // 16m 为100
+            float min_area = 20.0f;       // 最小面积阈值（像素）
+            float min_circularity = 0.7f; // 最小圆度
+            float min_radius = 50.0f;     // 初始半径下界
+            float max_radius = 80.0f;    // 初始半径上界
         };
+
+        // 动态半径滤波所需状态
+        float prev_radius_ = 0.0f;
+        bool has_prev_radius_ = false;
+
         std::vector<Light> find_lights(const cv::Mat &color_image, const cv::Mat &binary_image); // find lights in binary image
     };
 }

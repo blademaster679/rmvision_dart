@@ -8,6 +8,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <std_msgs/msg/u_int8.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include <tf2_ros/buffer.h>
@@ -19,9 +20,11 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "./detector.hpp"
 #include "pnp_solver.hpp"
+#include "kalman_filter.hpp"
 #include "auto_aim_interfaces/msg/light.hpp"
 #include "auto_aim_interfaces/msg/lights.hpp"
 #include "auto_aim_interfaces/msg/send.hpp"
@@ -54,6 +57,11 @@ namespace rm_auto_aim_dart
         rclcpp::Publisher<auto_aim_interfaces::msg::Light>::SharedPtr light_pub_;
         // 新增：Send 消息发布者
         rclcpp::Publisher<auto_aim_interfaces::msg::Send>::SharedPtr send_pub_;
+        // **新增：飞镖编号订阅 & 偏移映射**
+        // 当前飞镖编号（dart_id）
+        rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr dart_sub_;
+        uint8_t current_dart_id_{1}; // 默认 1
+        std::map<int, double> dart_offset_map_;
 
         // Visualization marker publisher
         visualization_msgs::msg::Marker light_marker_;
@@ -74,6 +82,13 @@ namespace rm_auto_aim_dart
         std::shared_ptr<tf2_ros::Buffer> tf2_buffer_;
         std::shared_ptr<tf2_ros::TransformListener> tf2_listener_;
         Eigen::Matrix3d imu_to_camera;
+
+        // Kalman filter
+        KalmanFilter angle_filter_;
+        double prev_angle_{0.0};
+        double jump_threshold_{0.05}; // 运动切换阈值（rad）
+        double Q_big_{1.0}, Q_small_{1e-3};
+        double R_angle_;
 
         // Debug
         bool debug_;

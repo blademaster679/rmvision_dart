@@ -79,6 +79,28 @@ namespace rm_auto_aim_dart
             RCLCPP_INFO(this->get_logger(), "Debug mode is enabled");
         }
 
+        // +++ 新增：声明并加载 dart_angle_offset 参数 +++
+        for (int i = 1; i <= 4; ++i)
+        {
+            this->declare_parameter<double>(
+                "dart_angle_offset." + std::to_string(i),
+                0.0);
+            dart_offset_map_[i] =
+                this->get_parameter("dart_angle_offset." + std::to_string(i))
+                    .as_double();
+        }
+
+        // +++ 新增：订阅当前飞镖编号 +++
+        dart_sub_ = this->create_subscription<std_msgs::msg::UInt8>(
+            "current_dart_id",
+            rclcpp::SensorDataQoS(),
+            [this](const std_msgs::msg::UInt8::SharedPtr msg)
+            {
+                current_dart_id_ = msg->data;
+                RCLCPP_DEBUG(this->get_logger(),
+                             "Received current_dart_id: %u", current_dart_id_);
+            });
+
         // Debug param change monitor
         debug_param_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
         debug_cb_handle_ =
@@ -199,10 +221,10 @@ namespace rm_auto_aim_dart
             RCLCPP_DEBUG_THROTTLE(
                 this->get_logger(), *get_clock(), 200,
                 "No lights detected, sending zero packet");
-            // —— 新增：无灯时持续发 distance=0, angle=0 ——
+            // —— 新增：无灯时持续发 distance=1, angle=0 ——
             auto zero_msg = auto_aim_interfaces::msg::Send();
             zero_msg.header = img_msg->header;
-            zero_msg.distance = 0.0;
+            zero_msg.distance = 1.0;
             zero_msg.angle = 0.0;
             send_pub_->publish(zero_msg);
             return;
@@ -233,7 +255,7 @@ namespace rm_auto_aim_dart
                     // Fill the distance to image center
                     light_msg.distance_to_image_center = pnp_solver_->calculateDistanceToCenter(light.center);
                     light_msg.distance = pnp_solver_->getDistance(light, rvec, tvec);
-                    light_msg.angle = pnp_solver_->getAngle(light, rvec, tvec);
+                    light_msg.angle = pnp_solver_->calculateHorizontalAngleDeg(light.center);
 
                     // Fill the markers
                     light_marker_.id++;
@@ -254,9 +276,30 @@ namespace rm_auto_aim_dart
                 auto send_msg = auto_aim_interfaces::msg::Send();
                 // 保留原始图像的 header，用于串口端计算延迟
                 send_msg.header = lights_msg_.header;
-                send_msg.distance = light.distance;
-                send_msg.angle = light.angle;
+                // 原始测量值
+                double raw_angle = light.angle;
+                double raw_dist = light.distance;
+
+                // 2. 卡尔曼滤波更新
+                // double smooth_angle = angle_filter_.update(raw_angle);
+
+                // 3. 发布平滑后的结果（保持原有的0.7偏移）
+                // **新增：根据当前 dart_id 读取偏移**
+                double offset = 0.0;
+                auto it = dart_offset_map_.find(current_dart_id_);
+                if (it != dart_offset_map_.end())
+                {
+                    offset = it->second;
+                }
+
+                send_msg.distance = raw_dist;
+                send_msg.angle = raw_angle + offset; // 应用动态偏移
                 send_pub_->publish(send_msg);
+
+                // prev_angle_ = raw_angle;
+                // send_msg.distance = light.distance;
+                // send_msg.angle = light.angle + 0.7;
+                // send_pub_->publish(send_msg);
             }
             publishMarkers();
         }

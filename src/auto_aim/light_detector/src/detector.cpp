@@ -12,7 +12,7 @@ namespace rm_auto_aim_dart
         // 提取绿色通道,Opencv中BGR顺序
         std::vector<cv::Mat> channels;
         cv::split(color_image, channels);
-        cv::Mat green_channel = channels[1];
+        this->green_channel = channels[1];
         cv::Mat red_channel = channels[2];
         cv::Mat blue_channel = channels[0];
         cv::Mat greenRegion;
@@ -23,14 +23,16 @@ namespace rm_auto_aim_dart
 
         cv::Mat binary_image; // convert grey image to binary image
         cv::threshold(greenCheck, binary_image, binary_threshold, 255, cv::THRESH_BINARY);
-        // cv::imshow("binary_image", binary_image);//调试
-        // cv::waitKey(0);
-        cv::Mat gradient_image; // close operation to binary image 形态学操作
-        int kernal_size = 3;
-        cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(kernal_size, kernal_size));
-        cv::morphologyEx(binary_image, gradient_image, cv::MORPH_GRADIENT, element);
-        // cv::imshow("gradient_image", gradient_image);//调试
-        // cv::waitKey(0);
+        // 形态学开运算去除小噪点
+        cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+        cv::Mat opened;
+        cv::morphologyEx(binary_image, opened, cv::MORPH_OPEN, element);
+        // 形态学闭运算填充小空洞
+        cv::Mat closed;
+        cv::morphologyEx(opened, closed, cv::MORPH_CLOSE, element);
+        // 最后对clean后的图像做梯度获取边缘
+        cv::Mat gradient_image;
+        cv::morphologyEx(closed, gradient_image, cv::MORPH_GRADIENT, element);
         return gradient_image;
     }
 
@@ -62,10 +64,6 @@ namespace rm_auto_aim_dart
             snprintf(label, sizeof(label), "R=%.1f, Fit=%.1f%%", radius, fitScore);
             cv::Point textPos(static_cast<int>(center.x - 50), static_cast<int>(center.y - 10));
             putText(image, label, textPos, cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 0, 255), 2);
-
-            // 显示结果图像
-            // cv::imshow("Detected Circle", image);
-            // cv::waitKey(1);
         }
         else
         {
@@ -73,12 +71,17 @@ namespace rm_auto_aim_dart
         }
     }
 
-    bool isLight(const Detector::Light &lights, const Detector::LightParams &params)
+    bool isLight(const Detector::Light &lights, const Detector::LightParams &params, float circularity, float area)
     {
         float minus = abs(lights.bottom.y - lights.top.y);
         std::cout << "minus: " << minus << std::endl; // 调试
-        bool minus_ok = minus > params.min_minus && minus < params.max_minus;
-        return minus_ok;
+        if (minus < params.min_radius || minus > params.max_radius)
+            return false;
+        if (area < params.min_area)
+            return false;
+        if (circularity < params.min_circularity)
+            return false;
+        return true;
     }
 
     bool fitCircleLeastSquares(const std::vector<cv::Point> &contourPoints, cv::Point2f &center, float &radius)
@@ -168,12 +171,14 @@ namespace rm_auto_aim_dart
             return {};
         }
         this->debug_lights.data.clear();
-        
+
         // 全局最佳拟合记录
         int bestIndex = -1;
         float bestFit = -1.0f;
         cv::Point2f bestC;
         float bestR = 0.0f;
+        float bestArea = 0.0f;
+        float bestCircularity = 0.0f;
 
         // 查找拟合度最高的圆
         for (size_t i = 0; i < contours.size(); ++i)
@@ -189,8 +194,26 @@ namespace rm_auto_aim_dart
                           // —— 新增：minus 检测 ——
             // minus 定义为上下两点纵向距离
             Detector::Light tmp(center, radius);
+            tmp.area = static_cast<float>(cv::contourArea(c));
+            tmp.circularity = static_cast<float>(4 * CV_PI * tmp.area / (tmp.width * tmp.height));
             float minus = std::abs(tmp.bottom.y - tmp.top.y);
-            if (minus >= 70.0f && minus <= 100.0f)
+            // 创建灯内部掩码
+            cv::Mat maskIn = cv::Mat::zeros(this->green_channel.size(), CV_8UC1);
+            cv::circle(maskIn, tmp.center, static_cast<int>(radius), cv::Scalar(255), -1); // 填充圆内部为255
+
+            // 创建环形外部掩码（比如圆外1.5倍半径的环形区域）
+            cv::Mat maskOut = cv::Mat::zeros(this->green_channel.size(), CV_8UC1);
+            cv::circle(maskOut, tmp.center, static_cast<int>(radius * 1.5), cv::Scalar(255), -1);
+            cv::circle(maskOut, tmp.center, static_cast<int>(radius), cv::Scalar(0), -1); // 挖空内部
+
+            // 计算内部和外部区域的平均亮度
+            float meanIn = cv::mean(this->green_channel, maskIn)[0];
+            float meanOut = cv::mean(this->green_channel, maskOut)[0];
+            if (meanIn < 100.0f || meanIn < meanOut * 1.5f)
+            {
+                continue; // 灯光亮度不足
+            }
+            if (minus >= 70.0f && minus <= 100.0f && tmp.circularity >= 0.8f && tmp.area >= 20.0f)
             {
                 // 一旦命中，立即将该灯放入结果并退出
                 std::vector<Detector::Light> lights{tmp};
@@ -222,6 +245,8 @@ namespace rm_auto_aim_dart
                 bestIndex = static_cast<int>(i);
                 bestC = center;
                 bestR = radius;
+                bestArea = tmp.area;
+                bestCircularity = tmp.circularity;
             }
         }
 
@@ -236,22 +261,35 @@ namespace rm_auto_aim_dart
         Detector::Light light(bestC, bestR);
         std::vector<Detector::Light> lights;
         Detector::LightParams params;
-        if (isLight(light, params))
+        if (isLight(light, params, bestCircularity, bestArea))
         {
-            lights.emplace_back(light);
-        }
+            // 计算拟合度
+            double sumErr = 0;
+            for (const auto &p : contours[bestIndex])
+            {
+                sumErr += std::abs(cv::norm(cv::Point2f(p) - light.center) - light.radius);
+            }
+            double meanErr = sumErr / contours[bestIndex].size();
+            double fitPct = (1.0 - meanErr / light.radius) * 100.0;
+            fitPct = std::clamp(fitPct, 0.0, 100.0);
+            light.circularity = static_cast<float>(fitPct);
 
-        // 填充调试数据
-        this->debug_lights.data.clear();
-        if (!lights.empty())
-        {
-            auto_aim_interfaces::msg::DebugLight dl;
-            dl.center_x = lights[0].center.x;
-            dl.radius = lights[0].radius;
-            dl.is_light = true;
-            this->debug_lights.data.emplace_back(dl);
-        }
+            // 将符合条件的灯光添加到结果列表
+            {
+                lights.emplace_back(light);
+            }
 
+            // 填充调试数据
+            this->debug_lights.data.clear();
+            if (!lights.empty())
+            {
+                auto_aim_interfaces::msg::DebugLight dl;
+                dl.center_x = lights[0].center.x;
+                dl.radius = lights[0].radius;
+                dl.is_light = true;
+                this->debug_lights.data.emplace_back(dl);
+            }
+        }
         return lights;
     }
 

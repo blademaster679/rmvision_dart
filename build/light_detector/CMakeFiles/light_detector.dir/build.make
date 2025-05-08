@@ -111,11 +111,26 @@ CMakeFiles/light_detector.dir/src/pnp_solver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/light_detector.dir/src/pnp_solver.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/pnp_solver.cpp -o CMakeFiles/light_detector.dir/src/pnp_solver.cpp.s
 
+CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o: CMakeFiles/light_detector.dir/flags.make
+CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o: /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/kalman_filter.cpp
+CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o: CMakeFiles/light_detector.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/blade_master/pnx/rmvision/build/light_detector/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o -MF CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o.d -o CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o -c /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/kalman_filter.cpp
+
+CMakeFiles/light_detector.dir/src/kalman_filter.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/light_detector.dir/src/kalman_filter.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/kalman_filter.cpp > CMakeFiles/light_detector.dir/src/kalman_filter.cpp.i
+
+CMakeFiles/light_detector.dir/src/kalman_filter.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/light_detector.dir/src/kalman_filter.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/src/kalman_filter.cpp -o CMakeFiles/light_detector.dir/src/kalman_filter.cpp.s
+
 # Object files for target light_detector
 light_detector_OBJECTS = \
 "CMakeFiles/light_detector.dir/src/detector_node.cpp.o" \
 "CMakeFiles/light_detector.dir/src/detector.cpp.o" \
-"CMakeFiles/light_detector.dir/src/pnp_solver.cpp.o"
+"CMakeFiles/light_detector.dir/src/pnp_solver.cpp.o" \
+"CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o"
 
 # External object files for target light_detector
 light_detector_EXTERNAL_OBJECTS =
@@ -123,6 +138,7 @@ light_detector_EXTERNAL_OBJECTS =
 liblight_detector.so: CMakeFiles/light_detector.dir/src/detector_node.cpp.o
 liblight_detector.so: CMakeFiles/light_detector.dir/src/detector.cpp.o
 liblight_detector.so: CMakeFiles/light_detector.dir/src/pnp_solver.cpp.o
+liblight_detector.so: CMakeFiles/light_detector.dir/src/kalman_filter.cpp.o
 liblight_detector.so: CMakeFiles/light_detector.dir/build.make
 liblight_detector.so: /opt/ros/humble/lib/libcomponent_manager.so
 liblight_detector.so: /opt/ros/humble/lib/libvisualization_msgs__rosidl_typesupport_fastrtps_c.so
@@ -283,10 +299,10 @@ liblight_detector.so: /opt/ros/humble/lib/libgeometry_msgs__rosidl_generator_py.
 liblight_detector.so: /opt/ros/humble/lib/libgeometry_msgs__rosidl_typesupport_c.so
 liblight_detector.so: /opt/ros/humble/lib/libgeometry_msgs__rosidl_generator_c.so
 liblight_detector.so: /opt/ros/humble/lib/libstd_msgs__rosidl_generator_py.so
-liblight_detector.so: /opt/ros/humble/lib/libbuiltin_interfaces__rosidl_generator_py.so
 liblight_detector.so: /opt/ros/humble/lib/libstd_msgs__rosidl_typesupport_c.so
-liblight_detector.so: /opt/ros/humble/lib/libbuiltin_interfaces__rosidl_typesupport_c.so
 liblight_detector.so: /opt/ros/humble/lib/libstd_msgs__rosidl_generator_c.so
+liblight_detector.so: /opt/ros/humble/lib/libbuiltin_interfaces__rosidl_generator_py.so
+liblight_detector.so: /opt/ros/humble/lib/libbuiltin_interfaces__rosidl_typesupport_c.so
 liblight_detector.so: /opt/ros/humble/lib/libbuiltin_interfaces__rosidl_generator_c.so
 liblight_detector.so: /usr/lib/x86_64-linux-gnu/libpython3.10.so
 liblight_detector.so: /opt/ros/humble/lib/libsensor_msgs__rosidl_typesupport_cpp.so
@@ -318,7 +334,7 @@ liblight_detector.so: /usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.5.4d
 liblight_detector.so: /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.4.5.4d
 liblight_detector.so: /usr/lib/x86_64-linux-gnu/libopencv_core.so.4.5.4d
 liblight_detector.so: CMakeFiles/light_detector.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/blade_master/pnx/rmvision/build/light_detector/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX shared library liblight_detector.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/blade_master/pnx/rmvision/build/light_detector/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library liblight_detector.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/light_detector.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

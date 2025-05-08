@@ -117,4 +117,13 @@ namespace rm_auto_aim_dart
             return -1;
         }
     }
+
+    double PnPSolver::calculateHorizontalAngleDeg(const cv::Point2f &center) const
+    {
+        double cx = camera_matrix.at<double>(0, 2);
+        double fx = camera_matrix.at<double>(0, 0);
+        double dx = static_cast<double>(center.x) - cx;
+        double rad = std::atan2(dx, fx);
+        return rad * 180.0 / M_PI; // 直接返回度
+    }
 } // namespace rm_auto_aim_dart

@@ -19,3 +19,13 @@
     binary_thres: 100
     light.min_ratio: 0.05
     ignore_classes: ["negative"]
+    # 新增卡尔曼滤波参数 —— 控制角度自适应滤波切换
+    angle_filter_Q_small: 0.001    # 静止时过程噪声
+    angle_filter_Q_big:   1.0      # 大运动时过程噪声
+    angle_filter_R:       0.01     # 角度测量噪声
+    # —— 在这里添加 dart_angle_offset —— 
+    dart_angle_offset:
+      "1": 0.0
+      "2": 0.0
+      "3": 0.0
+      "4": 0.0

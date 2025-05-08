@@ -28,6 +28,7 @@ find_package(g2o REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 ament_auto_find_build_dependencies()
 
 if(NOT g2o_FOUND OR NOT OpenCV_FOUND OR NOT fmt_FOUND)
@@ -47,9 +48,11 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/detector_node.cpp
   src/detector.cpp
   src/pnp_solver.cpp
+  src/kalman_filter.cpp
   include/detector_node.hpp
   include/detector.hpp
   include/pnp_solver.hpp
+  include/kalman_filter.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS} ${Sophus_INCLUDE_DIRS} ${g2o_INCLUDE_DIRS} /opt/ros/humble/include/image_transport/image_transport)

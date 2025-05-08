@@ -1188,6 +1188,12 @@ CMakeFiles/light_detector.dir/src/detector_node.cpp.o: \
  /opt/ros/humble/include/message_filters/message_filters/signal1.h \
  /opt/ros/humble/include/message_filters/message_filters/message_event.h \
  /opt/ros/humble/include/message_filters/message_filters/parameter_adapter.h \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/u_int8.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/u_int8__struct.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/u_int8__builder.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/u_int8__traits.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/u_int8__type_support.hpp \
+ /opt/ros/humble/include/std_msgs/std_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
  /opt/ros/humble/include/visualization_msgs/visualization_msgs/msg/marker_array.hpp \
  /opt/ros/humble/include/visualization_msgs/visualization_msgs/msg/detail/marker_array__struct.hpp \
  /opt/ros/humble/include/visualization_msgs/visualization_msgs/msg/detail/marker__struct.hpp \
@@ -1225,6 +1231,7 @@ CMakeFiles/light_detector.dir/src/detector_node.cpp.o: \
  /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/include/./detector.hpp \
  /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/include/pnp_solver.hpp \
  /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/include/detector.hpp \
+ /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/include/kalman_filter.hpp \
  /home/blade_master/pnx/rmvision/build/auto_aim_interfaces/rosidl_generator_cpp/auto_aim_interfaces/msg/light.hpp \
  /home/blade_master/pnx/rmvision/build/auto_aim_interfaces/rosidl_generator_cpp/auto_aim_interfaces/msg/detail/light__struct.hpp \
  /home/blade_master/pnx/rmvision/build/auto_aim_interfaces/rosidl_generator_cpp/auto_aim_interfaces/msg/detail/light__builder.hpp \

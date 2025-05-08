@@ -12,6 +12,7 @@
 #include <rclcpp/subscription.hpp>
 #include <serial_driver/serial_driver.hpp>
 #include <std_msgs/msg/float64.hpp>
+#include <std_msgs/msg/u_int8.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 
@@ -75,6 +76,9 @@ private:
   // For debug usage
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr latency_pub_;
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
+
+  //dart_id
+  rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr dart_pub_;  // 新增
 
   std::thread receive_thread_;
 

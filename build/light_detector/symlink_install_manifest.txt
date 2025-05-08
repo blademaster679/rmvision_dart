@@ -1,6 +1,7 @@
 /home/blade_master/pnx/rmvision/install/light_detector/lib/light_detector/light_detector_node
 /home/blade_master/pnx/rmvision/install/light_detector/include/detector.hpp
 /home/blade_master/pnx/rmvision/install/light_detector/include/detector_node.hpp
+/home/blade_master/pnx/rmvision/install/light_detector/include/kalman_filter.hpp
 /home/blade_master/pnx/rmvision/install/light_detector/include/pnp_solver.hpp
 /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/library_path.sh
 /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/library_path.dsv
