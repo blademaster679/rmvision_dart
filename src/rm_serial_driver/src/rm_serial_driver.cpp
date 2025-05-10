@@ -197,6 +197,8 @@ namespace rm_serial_driver
       SendPacket packet;
       packet.distance = msg->distance;
       packet.angle = msg->angle;
+      // 将收到的 stability 放入包中
+      packet.stability = msg->stability;
 
       // 先计算 CRC
       crc16::Append_CRC16_Check_Sum(reinterpret_cast<uint8_t *>(&packet), sizeof(packet));
@@ -208,9 +210,10 @@ namespace rm_serial_driver
 
       // 1) 打印逻辑字段
       RCLCPP_INFO(get_logger(),
-                  ">> Sending packet: distance=%.2f, angle=%.2f",
-                  packet.distance,
-                  packet.angle);
+                ">> Sending packet: distance=%.2f, angle=%.2f, stability=%u",
+                packet.distance,
+                packet.angle,
+                packet.stability);
 
       // 2) 打印原始字节（十六进制）
       {

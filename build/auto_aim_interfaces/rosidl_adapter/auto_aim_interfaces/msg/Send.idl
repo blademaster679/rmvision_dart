@@ -12,6 +12,8 @@ module auto_aim_interfaces {
       float distance;
 
       float angle;
+
+      uint8 stability;
     };
   };
 };

@@ -34,6 +34,8 @@
 #include "detector.hpp"
 #include "detector_node.hpp"
 #include "pnp_solver.hpp"
+// 新增：卡尔曼滤波器
+#include "kalman_filter.hpp"
 
 namespace rm_auto_aim_dart
 {
@@ -44,6 +46,15 @@ namespace rm_auto_aim_dart
         this->get_logger().set_level(rclcpp::Logger::Level::Debug);
         // detector
         detector_ = initDectector();
+
+        // 获取并设置卡尔曼滤波参数
+        R_angle_ = this->declare_parameter<double>("angle_filter_R", 1e-2);
+        double angle_q_small = this->declare_parameter<double>("angle_filter_Q_small", Q_small_);
+        double angle_q_big = this->declare_parameter<double>("angle_filter_Q_big", Q_big_);
+        // 小Q用于静止阶段，大Q用于运动阶段
+        Q_small_ = angle_q_small;
+        Q_big_ = angle_q_big;
+        angle_filter_.setParameters(Q_small_, R_angle_);
 
         // lights publisher
         light_pub_ = this->create_publisher<auto_aim_interfaces::msg::Light>(
@@ -226,6 +237,8 @@ namespace rm_auto_aim_dart
             zero_msg.header = img_msg->header;
             zero_msg.distance = 1.0;
             zero_msg.angle = 0.0;
+            // 无灯时视为不稳定
+            zero_msg.stability = 0;
             send_pub_->publish(zero_msg);
             return;
         }
@@ -280,8 +293,20 @@ namespace rm_auto_aim_dart
                 double raw_angle = light.angle;
                 double raw_dist = light.distance;
 
+                // 1. 判断是否“快速运动”——如果跳变大于阈值
+                if (std::abs(raw_angle - prev_angle_) > jump_threshold_)
+                {
+                    // 切换到大Q，几乎无平滑
+                    angle_filter_.setParameters(Q_big_, R_angle_);
+                }
+                else
+                {
+                    // 静止阶段，小Q强化平滑
+                    angle_filter_.setParameters(Q_small_, R_angle_);
+                }
+
                 // 2. 卡尔曼滤波更新
-                // double smooth_angle = angle_filter_.update(raw_angle);
+                double smooth_angle = angle_filter_.update(raw_angle);
 
                 // 3. 发布平滑后的结果（保持原有的0.7偏移）
                 // **新增：根据当前 dart_id 读取偏移**
@@ -293,10 +318,12 @@ namespace rm_auto_aim_dart
                 }
 
                 send_msg.distance = raw_dist;
-                send_msg.angle = raw_angle + offset; // 应用动态偏移
+                send_msg.angle = smooth_angle + offset; // 应用动态偏移
+                // 根据 smooth_angle + offset 判断稳定性：[-0.06, 0.06] 视为稳定
+                send_msg.stability = (std::abs(smooth_angle + offset) <= 0.06) ? 1 : 0;
                 send_pub_->publish(send_msg);
 
-                // prev_angle_ = raw_angle;
+                prev_angle_ = raw_angle;
                 // send_msg.distance = light.distance;
                 // send_msg.angle = light.angle + 0.7;
                 // send_pub_->publish(send_msg);

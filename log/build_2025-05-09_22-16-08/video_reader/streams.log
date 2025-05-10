@@ -1,0 +1,78 @@
+[0.026s] Invoking command in '/home/blade_master/pnx/rmvision/build/video_reader': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/blade_master/pnx/rmvision/src/video_reader -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/blade_master/pnx/rmvision/install/video_reader
+[0.200s] -- The C compiler identification is GNU 11.4.0
+[0.465s] -- The CXX compiler identification is GNU 11.4.0
+[0.631s] -- Detecting C compiler ABI info
+[0.719s] -- Detecting C compiler ABI info - done
+[0.725s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.726s] -- Detecting C compile features
+[0.727s] -- Detecting C compile features - done
+[0.731s] -- Detecting CXX compiler ABI info
+[0.836s] -- Detecting CXX compiler ABI info - done
+[0.842s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.843s] -- Detecting CXX compile features
+[0.843s] -- Detecting CXX compile features - done
+[0.848s] -- Found ament_cmake_auto: 1.3.11 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[1.036s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.126s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.181s] -- Found OpenCV: /usr (found version "4.5.4") 
+[1.184s] -- Found camera_info_manager: 3.1.11 (/opt/ros/humble/share/camera_info_manager/cmake)
+[1.334s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.338s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.349s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.369s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.384s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.474s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.482s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.988s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[2.474s] -- Found FastRTPS: /opt/ros/humble/include  
+[3.256s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[3.270s] -- Looking for pthread.h
+[3.388s] -- Looking for pthread.h - found
+[3.388s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[3.523s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[3.524s] -- Found Threads: TRUE  
+[5.163s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[5.190s] -- Configuring done
+[5.340s] -- Generating done
+[5.360s] -- Build files have been written to: /home/blade_master/pnx/rmvision/build/video_reader
+[5.397s] Invoked command in '/home/blade_master/pnx/rmvision/build/video_reader' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/blade_master/pnx/rmvision/src/video_reader -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/blade_master/pnx/rmvision/install/video_reader
+[5.402s] Invoking command in '/home/blade_master/pnx/rmvision/build/video_reader': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/video_reader -- -j22 -l22
+[5.484s] [ 50%] [32mBuilding CXX object CMakeFiles/video_reader.dir/src/video_reader_node.cpp.o[0m
+[5.484s] [ 50%] [32mBuilding CXX object CMakeFiles/video_reader_node.dir/rclcpp_components/node_main_video_reader_node.cpp.o[0m
+[11.652s] [ 75%] [32m[1mLinking CXX executable video_reader_node[0m
+[11.912s] [ 75%] Built target video_reader_node
+[14.688s] [100%] [32m[1mLinking CXX shared library libvideo_reader.so[0m
+[15.070s] [100%] Built target video_reader
+[15.082s] Invoked command in '/home/blade_master/pnx/rmvision/build/video_reader' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/video_reader -- -j22 -l22
+[15.085s] Invoking command in '/home/blade_master/pnx/rmvision/build/video_reader': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/video_reader
+[15.090s] -- Install configuration: ""
+[15.091s] -- Execute custom install script
+[15.091s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/lib/video_reader/video_reader_node
+[15.100s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/include/video_reader/video_reader_node.hpp
+[15.109s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/environment/library_path.sh
+[15.117s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/environment/library_path.dsv
+[15.126s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/lib/libvideo_reader.so
+[15.135s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/docs/test.mp4
+[15.146s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/docs/test2.mp4
+[15.155s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/config/camera_info.yaml
+[15.162s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/config/camera_params.yaml
+[15.171s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/ament_index/resource_index/package_run_dependencies/video_reader
+[15.180s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/ament_index/resource_index/parent_prefix_path/video_reader
+[15.189s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/environment/ament_prefix_path.sh
+[15.197s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/environment/ament_prefix_path.dsv
+[15.205s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/environment/path.sh
+[15.213s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/environment/path.dsv
+[15.222s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/local_setup.bash
+[15.230s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/local_setup.sh
+[15.238s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/local_setup.zsh
+[15.245s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/local_setup.dsv
+[15.254s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/package.dsv
+[15.264s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/ament_index/resource_index/packages/video_reader
+[15.272s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/ament_index/resource_index/rclcpp_components/video_reader
+[15.280s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/cmake/ament_cmake_export_dependencies-extras.cmake
+[15.289s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/cmake/ament_cmake_export_include_directories-extras.cmake
+[15.297s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/cmake/ament_cmake_export_libraries-extras.cmake
+[15.305s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/cmake/video_readerConfig.cmake
+[15.313s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/cmake/video_readerConfig-version.cmake
+[15.321s] -- Symlinking: /home/blade_master/pnx/rmvision/install/video_reader/share/video_reader/package.xml
+[15.333s] Invoked command in '/home/blade_master/pnx/rmvision/build/video_reader' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/video_reader

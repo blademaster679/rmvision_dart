@@ -1,0 +1,19 @@
+[01m[K/home/blade_master/pnx/rmvision/src/rm_serial_driver/src/rm_serial_driver.cpp:213:78:[m[K [01;31m[Kerror: [m[Kmissing terminating " character [[01;31m[K-Werror[m[K]
+  213 |                   ">> Sending packet: distance=%.2f, angle=%.2f", stability=%[01;31m[Ku[m[K",
+      |                                                                              [01;31m[K^[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/home/blade_master/pnx/rmvision/src/rm_serial_driver/src/rm_serial_driver.cpp:6[m[K:
+[01m[K/home/blade_master/pnx/rmvision/src/rm_serial_driver/src/rm_serial_driver.cpp:213:78:[m[K [01;31m[Kerror: [m[Kstray ‘[01m[Ku[m[K’ in program
+  213 |                   ">> Sending packet: distance=%.2f, angle=%.2f", stability=%[01;31m[Ku",[m[K
+      |                                                                              [01;31m[K^~~[m[K
+[01m[K/home/blade_master/pnx/rmvision/src/rm_serial_driver/src/rm_serial_driver.cpp:[m[K In member function ‘[01m[Kvoid rm_serial_driver::RMSerialDriver::sendData(auto_aim_interfaces::msg::Send_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/blade_master/pnx/rmvision/src/rm_serial_driver/src/rm_serial_driver.cpp:213:67:[m[K [01;31m[Kerror: [m[K‘[01m[Kstability[m[K’ was not declared in this scope
+  213 |                   ">> Sending packet: distance=%.2f, angle=%.2f", [01;31m[Kstability[m[K=%u",
+      |                                                                   [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/blade_master/pnx/rmvision/src/rm_serial_driver/src/rm_serial_driver.cpp:213:77:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K%[m[K’ token
+  213 |                   ">> Sending packet: distance=%.2f, angle=%.2f", stability=[01;31m[K%[m[Ku",
+      |                                                                             [01;31m[K^[m[K
+cc1plus: all warnings being treated as errors
+gmake[2]: *** [CMakeFiles/rm_serial_driver.dir/build.make:76: CMakeFiles/rm_serial_driver.dir/src/rm_serial_driver.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/rm_serial_driver.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

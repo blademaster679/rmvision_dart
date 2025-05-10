@@ -27,6 +27,7 @@ typedef struct auto_aim_interfaces__msg__Send
   std_msgs__msg__Header header;
   float distance;
   float angle;
+  uint8_t stability;
 } auto_aim_interfaces__msg__Send;
 
 // Struct for a sequence of auto_aim_interfaces__msg__Send.

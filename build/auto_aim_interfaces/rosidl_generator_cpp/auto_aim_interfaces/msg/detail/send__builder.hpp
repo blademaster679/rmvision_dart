@@ -21,16 +21,32 @@ namespace msg
 namespace builder
 {
 
+class Init_Send_stability
+{
+public:
+  explicit Init_Send_stability(::auto_aim_interfaces::msg::Send & msg)
+  : msg_(msg)
+  {}
+  ::auto_aim_interfaces::msg::Send stability(::auto_aim_interfaces::msg::Send::_stability_type arg)
+  {
+    msg_.stability = std::move(arg);
+    return std::move(msg_);
+  }
+
+private:
+  ::auto_aim_interfaces::msg::Send msg_;
+};
+
 class Init_Send_angle
 {
 public:
   explicit Init_Send_angle(::auto_aim_interfaces::msg::Send & msg)
   : msg_(msg)
   {}
-  ::auto_aim_interfaces::msg::Send angle(::auto_aim_interfaces::msg::Send::_angle_type arg)
+  Init_Send_stability angle(::auto_aim_interfaces::msg::Send::_angle_type arg)
   {
     msg_.angle = std::move(arg);
-    return std::move(msg_);
+    return Init_Send_stability(msg_);
   }
 
 private:

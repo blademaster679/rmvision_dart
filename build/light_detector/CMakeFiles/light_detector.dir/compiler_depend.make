@@ -1843,6 +1843,7 @@ CMakeFiles/light_detector.dir/src/detector_node.cpp.o: /home/blade_master/pnx/rm
   /home/blade_master/pnx/rmvision/build/auto_aim_interfaces/rosidl_generator_cpp/auto_aim_interfaces/msg/detail/send__traits.hpp \
   /home/blade_master/pnx/rmvision/build/auto_aim_interfaces/rosidl_generator_cpp/auto_aim_interfaces/msg/detail/send__type_support.hpp \
   /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/include/pnp_solver.hpp \
+  /home/blade_master/pnx/rmvision/src/auto_aim/light_detector/include/kalman_filter.hpp \
   /opt/ros/humble/include/rclcpp_components/rclcpp_components/register_node_macro.hpp \
   /opt/ros/humble/include/class_loader/class_loader/class_loader.hpp \
   /usr/include/console_bridge/console.h \

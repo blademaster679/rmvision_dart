@@ -88,6 +88,11 @@ static bool _Send__cdr_serialize(
     cdr << ros_message->angle;
   }
 
+  // Field name: stability
+  {
+    cdr << ros_message->stability;
+  }
+
   return true;
 }
 
@@ -124,6 +129,11 @@ static bool _Send__cdr_deserialize(
     cdr >> ros_message->angle;
   }
 
+  // Field name: stability
+  {
+    cdr >> ros_message->stability;
+  }
+
   return true;
 }  // NOLINT(readability/fn_size)
 
@@ -154,6 +164,12 @@ size_t get_serialized_size_auto_aim_interfaces__msg__Send(
   // field.name angle
   {
     size_t item_size = sizeof(ros_message->angle);
+    current_alignment += item_size +
+      eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
+  }
+  // field.name stability
+  {
+    size_t item_size = sizeof(ros_message->stability);
     current_alignment += item_size +
       eprosima::fastcdr::Cdr::alignment(current_alignment, item_size);
   }
@@ -221,6 +237,13 @@ size_t max_serialized_size_auto_aim_interfaces__msg__Send(
     current_alignment += array_size * sizeof(uint32_t) +
       eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
   }
+  // member: stability
+  {
+    size_t array_size = 1;
+
+    last_member_size = array_size * sizeof(uint8_t);
+    current_alignment += array_size * sizeof(uint8_t);
+  }
 
   size_t ret_val = current_alignment - initial_alignment;
   if (is_plain) {
@@ -230,7 +253,7 @@ size_t max_serialized_size_auto_aim_interfaces__msg__Send(
     using DataType = auto_aim_interfaces__msg__Send;
     is_plain =
       (
-      offsetof(DataType, angle) +
+      offsetof(DataType, stability) +
       last_member_size
       ) == ret_val;
   }

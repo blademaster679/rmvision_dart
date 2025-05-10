@@ -1,0 +1,85 @@
+[0.022s] Invoking command in '/home/blade_master/pnx/rmvision/build/hik_camera': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/blade_master/pnx/rmvision/src/hik-driver -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/blade_master/pnx/rmvision/install/hik_camera
+[0.207s] -- The C compiler identification is GNU 11.4.0
+[0.472s] -- The CXX compiler identification is GNU 11.4.0
+[0.649s] -- Detecting C compiler ABI info
+[0.742s] -- Detecting C compiler ABI info - done
+[0.749s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.749s] -- Detecting C compile features
+[0.750s] -- Detecting C compile features - done
+[0.753s] -- Detecting CXX compiler ABI info
+[0.887s] -- Detecting CXX compiler ABI info - done
+[0.897s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.897s] -- Detecting CXX compile features
+[0.898s] -- Detecting CXX compile features - done
+[0.900s] -- Found ament_cmake_auto: 1.3.11 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[1.071s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.158s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.400s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.405s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.414s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.427s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.446s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.512s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.516s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.996s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[2.485s] -- Found FastRTPS: /opt/ros/humble/include  
+[3.264s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[3.278s] -- Looking for pthread.h
+[3.395s] -- Looking for pthread.h - found
+[3.396s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[3.522s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[3.523s] -- Found Threads: TRUE  
+[4.921s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[5.000s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[5.000s] -- Configured cppcheck include dirs: /home/blade_master/pnx/rmvision/src/hik-driver/hikSDK/include
+[5.000s] -- Configured cppcheck exclude dirs and/or files: 
+[5.003s] -- Added test 'flake8' to check Python code syntax and style conventions
+[5.008s] -- Added test 'lint_cmake' to check CMake code style
+[5.010s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[5.012s] -- Added test 'xmllint' to check XML markup files
+[5.020s] -- Configuring done
+[5.104s] -- Generating done
+[5.126s] -- Build files have been written to: /home/blade_master/pnx/rmvision/build/hik_camera
+[5.186s] Invoked command in '/home/blade_master/pnx/rmvision/build/hik_camera' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/blade_master/pnx/rmvision/src/hik-driver -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/blade_master/pnx/rmvision/install/hik_camera
+[5.187s] Invoking command in '/home/blade_master/pnx/rmvision/build/hik_camera': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/hik_camera -- -j22 -l22
+[5.317s] [ 25%] [32mBuilding CXX object CMakeFiles/hik_camera.dir/src/hik_camera_node.cpp.o[0m
+[5.317s] [ 50%] [32mBuilding CXX object CMakeFiles/hik_camera_node.dir/rclcpp_components/node_main_hik_camera_node.cpp.o[0m
+[11.058s] [ 75%] [32m[1mLinking CXX executable hik_camera_node[0m
+[11.418s] [ 75%] Built target hik_camera_node
+[11.776s] [100%] [32m[1mLinking CXX shared library libhik_camera.so[0m
+[12.078s] [100%] Built target hik_camera
+[12.092s] Invoked command in '/home/blade_master/pnx/rmvision/build/hik_camera' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/hik_camera -- -j22 -l22
+[12.096s] Invoking command in '/home/blade_master/pnx/rmvision/build/hik_camera': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/hik_camera
+[12.102s] -- Install configuration: ""
+[12.102s] -- Execute custom install script
+[12.103s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/libFormatConversion.so
+[12.115s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/libMVRender.so
+[12.125s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/libMediaProcess.so
+[12.134s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/libMvCameraControl.so
+[12.144s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/libMvUsb3vTL.so
+[12.153s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/hik_camera/hik_camera_node
+[12.163s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/environment/library_path.sh
+[12.174s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/environment/library_path.dsv
+[12.184s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/lib/libhik_camera.so
+[12.195s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/config/camera_info.yaml
+[12.205s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/config/camera_params.yaml
+[12.215s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/launch/hik_camera.launch.py
+[12.226s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/ament_index/resource_index/package_run_dependencies/hik_camera
+[12.235s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/ament_index/resource_index/parent_prefix_path/hik_camera
+[12.246s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/environment/ament_prefix_path.sh
+[12.256s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/environment/ament_prefix_path.dsv
+[12.266s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/environment/path.sh
+[12.276s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/environment/path.dsv
+[12.287s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/local_setup.bash
+[12.300s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/local_setup.sh
+[12.309s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/local_setup.zsh
+[12.318s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/local_setup.dsv
+[12.326s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/package.dsv
+[12.336s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/ament_index/resource_index/packages/hik_camera
+[12.344s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/ament_index/resource_index/rclcpp_components/hik_camera
+[12.356s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/cmake/ament_cmake_export_dependencies-extras.cmake
+[12.368s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/cmake/ament_cmake_export_libraries-extras.cmake
+[12.378s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/cmake/hik_cameraConfig.cmake
+[12.388s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/cmake/hik_cameraConfig-version.cmake
+[12.398s] -- Symlinking: /home/blade_master/pnx/rmvision/install/hik_camera/share/hik_camera/package.xml
+[12.409s] Invoked command in '/home/blade_master/pnx/rmvision/build/hik_camera' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/hik_camera

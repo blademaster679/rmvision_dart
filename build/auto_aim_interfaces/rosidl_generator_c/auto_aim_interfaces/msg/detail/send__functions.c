@@ -28,6 +28,7 @@ auto_aim_interfaces__msg__Send__init(auto_aim_interfaces__msg__Send * msg)
   }
   // distance
   // angle
+  // stability
   return true;
 }
 
@@ -41,6 +42,7 @@ auto_aim_interfaces__msg__Send__fini(auto_aim_interfaces__msg__Send * msg)
   std_msgs__msg__Header__fini(&msg->header);
   // distance
   // angle
+  // stability
 }
 
 bool
@@ -61,6 +63,10 @@ auto_aim_interfaces__msg__Send__are_equal(const auto_aim_interfaces__msg__Send *
   }
   // angle
   if (lhs->angle != rhs->angle) {
+    return false;
+  }
+  // stability
+  if (lhs->stability != rhs->stability) {
     return false;
   }
   return true;
@@ -84,6 +90,8 @@ auto_aim_interfaces__msg__Send__copy(
   output->distance = input->distance;
   // angle
   output->angle = input->angle;
+  // stability
+  output->stability = input->stability;
   return true;
 }
 

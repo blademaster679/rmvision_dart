@@ -86,7 +86,7 @@ namespace rm_auto_aim_dart
         // Kalman filter
         KalmanFilter angle_filter_;
         double prev_angle_{0.0};
-        double jump_threshold_{0.05}; // 运动切换阈值（rad）
+        double jump_threshold_{0.03}; // 运动切换阈值（rad）
         double Q_big_{1.0}, Q_small_{1e-3};
         double R_angle_;
 

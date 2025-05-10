@@ -29,6 +29,7 @@ struct SendPacket
   
   float distance;
   float angle;
+  uint8_t stability;
   
   uint16_t checksum = 0;
 } __attribute__((packed));

@@ -83,6 +83,15 @@ bool auto_aim_interfaces__msg__send__convert_from_py(PyObject * _pymsg, void * _
     ros_message->angle = (float)PyFloat_AS_DOUBLE(field);
     Py_DECREF(field);
   }
+  {  // stability
+    PyObject * field = PyObject_GetAttrString(_pymsg, "stability");
+    if (!field) {
+      return false;
+    }
+    assert(PyLong_Check(field));
+    ros_message->stability = (uint8_t)PyLong_AsUnsignedLong(field);
+    Py_DECREF(field);
+  }
 
   return true;
 }
@@ -135,6 +144,17 @@ PyObject * auto_aim_interfaces__msg__send__convert_to_py(void * raw_ros_message)
     field = PyFloat_FromDouble(ros_message->angle);
     {
       int rc = PyObject_SetAttrString(_pymessage, "angle", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // stability
+    PyObject * field = NULL;
+    field = PyLong_FromUnsignedLong(ros_message->stability);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "stability", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;

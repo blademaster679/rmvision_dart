@@ -64,18 +64,21 @@ class Send(metaclass=Metaclass_Send):
         '_header',
         '_distance',
         '_angle',
+        '_stability',
     ]
 
     _fields_and_field_types = {
         'header': 'std_msgs/Header',
         'distance': 'float',
         'angle': 'float',
+        'stability': 'uint8',
     }
 
     SLOT_TYPES = (
         rosidl_parser.definition.NamespacedType(['std_msgs', 'msg'], 'Header'),  # noqa: E501
         rosidl_parser.definition.BasicType('float'),  # noqa: E501
         rosidl_parser.definition.BasicType('float'),  # noqa: E501
+        rosidl_parser.definition.BasicType('uint8'),  # noqa: E501
     )
 
     def __init__(self, **kwargs):
@@ -86,6 +89,7 @@ class Send(metaclass=Metaclass_Send):
         self.header = kwargs.get('header', Header())
         self.distance = kwargs.get('distance', float())
         self.angle = kwargs.get('angle', float())
+        self.stability = kwargs.get('stability', int())
 
     def __repr__(self):
         typename = self.__class__.__module__.split('.')
@@ -121,6 +125,8 @@ class Send(metaclass=Metaclass_Send):
         if self.distance != other.distance:
             return False
         if self.angle != other.angle:
+            return False
+        if self.stability != other.stability:
             return False
         return True
 
@@ -172,3 +178,18 @@ class Send(metaclass=Metaclass_Send):
             assert not (value < -3.402823466e+38 or value > 3.402823466e+38) or math.isinf(value), \
                 "The 'angle' field must be a float in [-3.402823466e+38, 3.402823466e+38]"
         self._angle = value
+
+    @builtins.property
+    def stability(self):
+        """Message field 'stability'."""
+        return self._stability
+
+    @stability.setter
+    def stability(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, int), \
+                "The 'stability' field must be of type 'int'"
+            assert value >= 0 and value < 256, \
+                "The 'stability' field must be an unsigned integer in [0, 255]"
+        self._stability = value

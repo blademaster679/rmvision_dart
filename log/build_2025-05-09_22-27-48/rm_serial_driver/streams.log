@@ -1,0 +1,39 @@
+[0.037s] Invoking command in '/home/blade_master/pnx/rmvision/build/rm_serial_driver': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/rm_serial_driver -- -j22 -l22
+[0.064s] [35m[1mConsolidate compiler generated dependencies of target rm_serial_driver[0m
+[0.071s] [ 40%] Built target rm_serial_driver_node
+[0.082s] [ 60%] [32mBuilding CXX object CMakeFiles/rm_serial_driver.dir/src/rm_serial_driver.cpp.o[0m
+[9.796s] [ 80%] [32m[1mLinking CXX shared library librm_serial_driver.so[0m
+[10.450s] [100%] Built target rm_serial_driver
+[10.458s] Invoked command in '/home/blade_master/pnx/rmvision/build/rm_serial_driver' returned '0': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/rm_serial_driver -- -j22 -l22
+[10.459s] Invoking command in '/home/blade_master/pnx/rmvision/build/rm_serial_driver': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/rm_serial_driver
+[10.463s] -- Install configuration: ""
+[10.464s] -- Execute custom install script
+[10.464s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/lib/rm_serial_driver/rm_serial_driver_node
+[10.470s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/include/crc.hpp
+[10.475s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/include/packet.hpp
+[10.479s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/include/rm_serial_driver.hpp
+[10.485s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/environment/library_path.sh
+[10.490s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/environment/library_path.dsv
+[10.495s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/lib/librm_serial_driver.so
+[10.501s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/config/serial_driver.yaml
+[10.506s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/launch/serial_driver.launch.py
+[10.511s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/ament_index/resource_index/package_run_dependencies/rm_serial_driver
+[10.516s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/ament_index/resource_index/parent_prefix_path/rm_serial_driver
+[10.522s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/environment/ament_prefix_path.sh
+[10.528s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/environment/ament_prefix_path.dsv
+[10.533s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/environment/path.sh
+[10.537s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/environment/path.dsv
+[10.543s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/local_setup.bash
+[10.548s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/local_setup.sh
+[10.553s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/local_setup.zsh
+[10.558s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/local_setup.dsv
+[10.562s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/package.dsv
+[10.568s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/ament_index/resource_index/packages/rm_serial_driver
+[10.573s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/ament_index/resource_index/rclcpp_components/rm_serial_driver
+[10.577s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/cmake/ament_cmake_export_dependencies-extras.cmake
+[10.582s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/cmake/ament_cmake_export_include_directories-extras.cmake
+[10.587s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/cmake/ament_cmake_export_libraries-extras.cmake
+[10.593s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/cmake/rm_serial_driverConfig.cmake
+[10.598s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/cmake/rm_serial_driverConfig-version.cmake
+[10.604s] -- Symlinking: /home/blade_master/pnx/rmvision/install/rm_serial_driver/share/rm_serial_driver/package.xml
+[10.611s] Invoked command in '/home/blade_master/pnx/rmvision/build/rm_serial_driver' returned '0': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/rm_serial_driver

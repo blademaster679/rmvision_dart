@@ -1,0 +1,37 @@
+[0.040s] Invoking command in '/home/blade_master/pnx/rmvision/build/light_detector': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/light_detector -- -j22 -l22
+[0.069s] [35m[1mConsolidate compiler generated dependencies of target light_detector_node[0m
+[0.069s] [35m[1mConsolidate compiler generated dependencies of target light_detector[0m
+[0.082s] [ 28%] Built target light_detector_node
+[0.089s] [100%] Built target light_detector
+[0.096s] Invoked command in '/home/blade_master/pnx/rmvision/build/light_detector' returned '0': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/blade_master/pnx/rmvision/build/light_detector -- -j22 -l22
+[0.098s] Invoking command in '/home/blade_master/pnx/rmvision/build/light_detector': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/light_detector
+[0.103s] -- Install configuration: ""
+[0.103s] -- Execute custom install script
+[0.104s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/lib/light_detector/light_detector_node
+[0.112s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/detector.hpp
+[0.117s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/detector_node.hpp
+[0.126s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/kalman_filter.hpp
+[0.131s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/include/pnp_solver.hpp
+[0.141s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/library_path.sh
+[0.146s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/library_path.dsv
+[0.152s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/lib/liblight_detector.so
+[0.159s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/package_run_dependencies/light_detector
+[0.166s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/parent_prefix_path/light_detector
+[0.172s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/ament_prefix_path.sh
+[0.178s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/ament_prefix_path.dsv
+[0.187s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/path.sh
+[0.193s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/environment/path.dsv
+[0.201s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.bash
+[0.207s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.sh
+[0.214s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.zsh
+[0.220s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/local_setup.dsv
+[0.225s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/package.dsv
+[0.231s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/packages/light_detector
+[0.236s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/ament_index/resource_index/rclcpp_components/light_detector
+[0.242s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.249s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.254s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/ament_cmake_export_libraries-extras.cmake
+[0.260s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/light_detectorConfig.cmake
+[0.266s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/cmake/light_detectorConfig-version.cmake
+[0.272s] -- Symlinking: /home/blade_master/pnx/rmvision/install/light_detector/share/light_detector/package.xml
+[0.279s] Invoked command in '/home/blade_master/pnx/rmvision/build/light_detector' returned '0': AMENT_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces:/opt/ros/humble LD_LIBRARY_PATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/lib:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/lib/64:/opt/MVS/lib/32:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/opt/MVS/lib/64:/opt/MVS/lib/32 PYTHONPATH=/home/blade_master/pnx/rmvision/install/auto_aim_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/blade_master/pnx/rmvision/build/light_detector

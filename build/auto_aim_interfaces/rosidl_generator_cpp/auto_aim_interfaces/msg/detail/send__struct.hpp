@@ -45,6 +45,7 @@ struct Send_
     {
       this->distance = 0.0f;
       this->angle = 0.0f;
+      this->stability = 0;
     }
   }
 
@@ -56,6 +57,7 @@ struct Send_
     {
       this->distance = 0.0f;
       this->angle = 0.0f;
+      this->stability = 0;
     }
   }
 
@@ -69,6 +71,9 @@ struct Send_
   using _angle_type =
     float;
   _angle_type angle;
+  using _stability_type =
+    uint8_t;
+  _stability_type stability;
 
   // setters for named parameter idiom
   Type & set__header(
@@ -87,6 +92,12 @@ struct Send_
     const float & _arg)
   {
     this->angle = _arg;
+    return *this;
+  }
+  Type & set__stability(
+    const uint8_t & _arg)
+  {
+    this->stability = _arg;
     return *this;
   }
 
@@ -139,6 +150,9 @@ struct Send_
       return false;
     }
     if (this->angle != other.angle) {
+      return false;
+    }
+    if (this->stability != other.stability) {
       return false;
     }
     return true;
