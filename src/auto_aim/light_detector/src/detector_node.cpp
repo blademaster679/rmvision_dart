@@ -112,6 +112,17 @@ namespace rm_auto_aim_dart
                              "Received current_dart_id: %u", current_dart_id_);
             });
 
+        // 订阅比赛模式
+        competition_sub_ = this->create_subscription<std_msgs::msg::UInt8>(
+            "competition_mode",
+            rclcpp::SensorDataQoS(),
+            [this](std_msgs::msg::UInt8::SharedPtr msg)
+            {
+                competition_mode_ = msg->data;
+                RCLCPP_INFO(this->get_logger(),
+                            "Competition mode updated: %u", competition_mode_);
+            });
+
         // Debug param change monitor
         debug_param_sub_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
         debug_cb_handle_ =
@@ -193,7 +204,13 @@ namespace rm_auto_aim_dart
     void LightDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &img_msg)
     {
         try
-        {
+        { // 未到比赛开始，不处理
+            if (competition_mode_ != 4)
+            {
+                RCLCPP_DEBUG(this->get_logger(),
+                             "Skipping detection, mode=%u", competition_mode_);
+                return;
+            }
             RCLCPP_INFO(this->get_logger(),
                         "Received image with header.frame_id='%s' at time %u.%u",
                         img_msg->header.frame_id.c_str(),
@@ -318,9 +335,10 @@ namespace rm_auto_aim_dart
                 }
 
                 send_msg.distance = raw_dist;
-                send_msg.angle = smooth_angle + offset; // 应用动态偏移
+                send_msg.angle    = smooth_angle + offset; // 应用动态偏移
                 // 根据 smooth_angle + offset 判断稳定性：[-0.06, 0.06] 视为稳定
                 send_msg.stability = (std::abs(smooth_angle + offset) <= 0.06) ? 1 : 0;
+
                 send_pub_->publish(send_msg);
 
                 prev_angle_ = raw_angle;

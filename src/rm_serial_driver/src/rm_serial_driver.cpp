@@ -44,6 +44,10 @@ namespace rm_serial_driver
     marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("/aiming_point", 10);
     dart_pub_ = this->create_publisher<std_msgs::msg::UInt8>("current_dart_id", 10);
 
+    // --- 新增：初始化比赛模式 publisher ---
+    competition_mode_pub_ =
+        this->create_publisher<std_msgs::msg::UInt8>("competition_mode", 10);
+
     // Detect parameter client
     detector_param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "light_detector");
 
@@ -119,7 +123,7 @@ namespace rm_serial_driver
         uint8_t header = header_buf[0];
         if (header == 0x5A)
         {
-          // 2) 读 mode + dart_id + crc(2字节)
+          // 2) 读 competition_mode_ + mode + dart_id + crc(2字节)
           serial_driver_->port()->receive(buf);
 
           // 拼成完整 raw 数据：header + buf
@@ -128,18 +132,21 @@ namespace rm_serial_driver
           raw.push_back(header);
           raw.insert(raw.end(), buf.begin(), buf.end());
 
-          // CRC 校验：包含 header, dart_id, mode, crc
+          // CRC 校验：包含 header, competition_mode_, mode, dart_id, crc
           if (crc16::Verify_CRC16_Check_Sum(raw.data(), raw.size()))
           {
-            // const ReceivePacket *pkt = reinterpret_cast<const ReceivePacket *>(raw.data());
-            // RCLCPP_INFO(get_logger(),
-            //             "Parsed packet -> mode=%u, dart_id=%u", pkt->mode, pkt->dart_id); 调试
-
-            // 直接 reinterpret 为我们在 packet.hpp 里定义的新版 ReceivePacket
+            // 直接 reinterpret 为新版 ReceivePacket
             const ReceivePacket *packet =
                 reinterpret_cast<const ReceivePacket *>(raw.data());
 
-            // --- 现有的 mode 处理 ---
+            // --- 新增：发布比赛模式 competition_mode_ ---
+            std_msgs::msg::UInt8 comp_msg;
+            comp_msg.data = packet->competition_mode_;
+            competition_mode_pub_->publish(comp_msg);
+            RCLCPP_DEBUG(get_logger(),
+                         "Published competition_mode: %u", packet->competition_mode_);
+
+            // --- 现有：根据原 mode 做日志输出 ---
             switch (packet->mode)
             {
             case 0:
@@ -155,7 +162,7 @@ namespace rm_serial_driver
               RCLCPP_WARN(get_logger(), "Unknown mode: %u", packet->mode);
             }
 
-            // --- 新增：发布飞镖编号 dart_id ---
+            // --- 发布飞镖编号 dart_id ---
             std_msgs::msg::UInt8 dart_msg;
             dart_msg.data = packet->dart_id;
             dart_pub_->publish(dart_msg);
@@ -171,18 +178,19 @@ namespace rm_serial_driver
         else
         {
           // 包头不对就丢弃
-          RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 20,
+          RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 20.0,
                                "Invalid header: 0x%02X", header);
         }
       }
       catch (const std::exception &ex)
       {
-        RCLCPP_ERROR_THROTTLE(get_logger(), *get_clock(), 20,
+        RCLCPP_ERROR_THROTTLE(this->get_logger(), *get_clock(), 20.0,
                               "Error while receiving data: %s", ex.what());
         reopenPort();
       }
     }
   }
+
   void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Send::SharedPtr msg)
   {
     RCLCPP_INFO(get_logger(),
@@ -210,10 +218,10 @@ namespace rm_serial_driver
 
       // 1) 打印逻辑字段
       RCLCPP_INFO(get_logger(),
-                ">> Sending packet: distance=%.2f, angle=%.2f, stability=%u",
-                packet.distance,
-                packet.angle,
-                packet.stability);
+                  ">> Sending packet: distance=%.2f, angle=%.2f, stability=%u",
+                  packet.distance,
+                  packet.angle,
+                  packet.stability);
 
       // 2) 打印原始字节（十六进制）
       {

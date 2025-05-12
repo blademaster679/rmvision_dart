@@ -90,6 +90,11 @@ namespace rm_auto_aim_dart
         double Q_big_{1.0}, Q_small_{1e-3};
         double R_angle_;
 
+
+        // --- 新增：比赛模式开关 ---
+        uint8_t competition_mode_{0};
+        rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr competition_sub_;
+
         // Debug
         bool debug_;
         rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr on_set_params_cb_handle_;
