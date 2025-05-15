@@ -9,6 +9,7 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/u_int8.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include <tf2_ros/buffer.h>
@@ -63,6 +64,10 @@ namespace rm_auto_aim_dart
         uint8_t current_dart_id_{1}; // 默认 1
         std::map<int, double> dart_offset_map_;
 
+        // <<< NEW: subscription for serial offset >>>
+        rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr offset_sub_;
+        float offset_{0.0f};
+
         // Visualization marker publisher
         visualization_msgs::msg::Marker light_marker_;
         visualization_msgs::msg::Marker text_marker_;
@@ -89,7 +94,6 @@ namespace rm_auto_aim_dart
         double jump_threshold_{0.03}; // 运动切换阈值（rad）
         double Q_big_{1.0}, Q_small_{1e-3};
         double R_angle_;
-
 
         // --- 新增：比赛模式开关 ---
         uint8_t competition_mode_{0};

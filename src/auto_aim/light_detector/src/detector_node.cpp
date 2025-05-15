@@ -90,16 +90,16 @@ namespace rm_auto_aim_dart
             RCLCPP_INFO(this->get_logger(), "Debug mode is enabled");
         }
 
-        // +++ 新增：声明并加载 dart_angle_offset 参数 +++
-        for (int i = 1; i <= 4; ++i)
-        {
-            this->declare_parameter<double>(
-                "dart_angle_offset." + std::to_string(i),
-                0.0);
-            dart_offset_map_[i] =
-                this->get_parameter("dart_angle_offset." + std::to_string(i))
-                    .as_double();
-        }
+        // // +++ 新增：声明并加载 dart_angle_offset 参数 +++
+        // for (int i = 1; i <= 4; ++i)
+        // {
+        //     this->declare_parameter<double>(
+        //         "dart_angle_offset." + std::to_string(i),
+        //         0.0);
+        //     dart_offset_map_[i] =
+        //         this->get_parameter("dart_angle_offset." + std::to_string(i))
+        //             .as_double();
+        // }
 
         // +++ 新增：订阅当前飞镖编号 +++
         dart_sub_ = this->create_subscription<std_msgs::msg::UInt8>(
@@ -121,6 +121,15 @@ namespace rm_auto_aim_dart
                 competition_mode_ = msg->data;
                 RCLCPP_INFO(this->get_logger(),
                             "Competition mode updated: %u", competition_mode_);
+            });
+
+        // <<< NEW: subscribe to serial offset >>>
+        offset_sub_ = this->create_subscription<std_msgs::msg::Float32>(
+            "offset", rclcpp::SensorDataQoS(),
+            [this](const std_msgs::msg::Float32::SharedPtr msg)
+            {
+                offset_ = msg->data;
+                RCLCPP_DEBUG(this->get_logger(), "Received offset: %f", offset_);
             });
 
         // Debug param change monitor
@@ -325,20 +334,19 @@ namespace rm_auto_aim_dart
                 // 2. 卡尔曼滤波更新
                 double smooth_angle = angle_filter_.update(raw_angle);
 
-                // 3. 发布平滑后的结果（保持原有的0.7偏移）
-                // **新增：根据当前 dart_id 读取偏移**
-                double offset = 0.0;
-                auto it = dart_offset_map_.find(current_dart_id_);
-                if (it != dart_offset_map_.end())
-                {
-                    offset = it->second;
-                }
+                // // 3. 发布平滑后的结果（保持原有的0.7偏移）
+                // // **新增：根据当前 dart_id 读取偏移**
+                // double offset = 0.0;
+                // auto it = dart_offset_map_.find(current_dart_id_);
+                // if (it != dart_offset_map_.end())
+                // {
+                //     offset = it->second;
+                // }
 
+                // <<< UPDATED: use serial offset >>>
                 send_msg.distance = raw_dist;
-                send_msg.angle    = smooth_angle + offset; // 应用动态偏移
-                // 根据 smooth_angle + offset 判断稳定性：[-0.06, 0.06] 视为稳定
-                send_msg.stability = (std::abs(smooth_angle + offset) <= 0.06) ? 1 : 0;
-
+                send_msg.angle = smooth_angle + offset_;
+                send_msg.stability = (std::abs(smooth_angle + offset_) <= 0.06) ? 1 : 0;
                 send_pub_->publish(send_msg);
 
                 prev_angle_ = raw_angle;
@@ -438,6 +446,20 @@ namespace rm_auto_aim_dart
         auto latency_s = latency_ss.str();
         cv::putText(
             img, latency_s, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
+        // 新增：如果已经计算出了 PnP 的 distance/angle，就把它们也画上去
+        if (!lights_msg_.lights.empty())
+        {
+            // 只取第一个 light 的信息
+            const auto &lm = lights_msg_.lights[0];
+            char info[128];
+            // 距离单位是米，角度单位是度
+            std::snprintf(info, sizeof(info),
+                          "Dist=%.2fm, Ang=%.2fdeg",
+                          lm.distance, lm.angle);
+            cv::putText(img, info, cv::Point(10, 60),
+                        cv::FONT_HERSHEY_SIMPLEX, 0.6,
+                        cv::Scalar(0, 255, 255), 2);
+        }
         result_img_pub_.publish(cv_bridge::CvImage(img_msg->header, "rgb8", img).toImageMsg());
     }
 

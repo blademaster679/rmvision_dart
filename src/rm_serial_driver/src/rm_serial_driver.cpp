@@ -48,6 +48,9 @@ namespace rm_serial_driver
     competition_mode_pub_ =
         this->create_publisher<std_msgs::msg::UInt8>("competition_mode", 10);
 
+    // <<< NEW: initialize offset publisher >>>
+    offset_pub_ = this->create_publisher<std_msgs::msg::Float32>("offset", 10);
+
     // Detect parameter client
     detector_param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "light_detector");
 
@@ -109,83 +112,71 @@ namespace rm_serial_driver
 
   void RMSerialDriver::receiveData()
   {
-    // 1 字节头 + (sizeof(ReceivePacket)-1) 字节数据
+    constexpr size_t PACKET_SIZE = sizeof(ReceivePacket);
     std::vector<uint8_t> header_buf(1);
-    std::vector<uint8_t> buf(sizeof(ReceivePacket) - 1);
+    std::vector<uint8_t> buf(PACKET_SIZE - 1); // exclude header
 
     while (rclcpp::ok())
     {
       try
       {
-        // 1) 读包头
         serial_driver_->port()->receive(header_buf);
-
         uint8_t header = header_buf[0];
+
         if (header == 0x5A)
         {
-          // 2) 读 competition_mode_ + mode + dart_id + crc(2字节)
           serial_driver_->port()->receive(buf);
 
-          // 拼成完整 raw 数据：header + buf
           std::vector<uint8_t> raw;
-          raw.reserve(1 + buf.size());
+          raw.reserve(PACKET_SIZE);
           raw.push_back(header);
           raw.insert(raw.end(), buf.begin(), buf.end());
 
-          // CRC 校验：包含 header, competition_mode_, mode, dart_id, crc
-          if (crc16::Verify_CRC16_Check_Sum(raw.data(), raw.size()))
+          if (!crc16::Verify_CRC16_Check_Sum(raw.data(), raw.size()))
           {
-            // 直接 reinterpret 为新版 ReceivePacket
-            const ReceivePacket *packet =
-                reinterpret_cast<const ReceivePacket *>(raw.data());
-
-            // --- 新增：发布比赛模式 competition_mode_ ---
-            std_msgs::msg::UInt8 comp_msg;
-            comp_msg.data = packet->competition_mode_;
-            competition_mode_pub_->publish(comp_msg);
-            RCLCPP_DEBUG(get_logger(),
-                         "Published competition_mode: %u", packet->competition_mode_);
-
-            // --- 现有：根据原 mode 做日志输出 ---
-            switch (packet->mode)
-            {
-            case 0:
-              RCLCPP_DEBUG(get_logger(), "Mode: Outpost (0)");
-              break;
-            case 1:
-              RCLCPP_DEBUG(get_logger(), "Mode: Fixed (1)");
-              break;
-            case 2:
-              RCLCPP_DEBUG(get_logger(), "Mode: Random (2)");
-              break;
-            default:
-              RCLCPP_WARN(get_logger(), "Unknown mode: %u", packet->mode);
-            }
-
-            // --- 发布飞镖编号 dart_id ---
-            std_msgs::msg::UInt8 dart_msg;
-            dart_msg.data = packet->dart_id;
-            dart_pub_->publish(dart_msg);
-            RCLCPP_DEBUG(get_logger(),
-                         "Published current_dart_id: %u", packet->dart_id);
+            RCLCPP_WARN(get_logger(), "CRC16 verification failed.");
+            continue;
           }
-          else
-          {
-            RCLCPP_ERROR(get_logger(),
-                         "CRC16 error: header=0x%02X", header);
-          }
+
+          // 手动解析字段
+          ReceivePacket packet;
+          packet.header = raw[0];
+          packet.competition_mode_ = raw[1];
+          packet.dart_id = raw[2];
+          packet.mode = raw[3];
+
+          // 解析 float offset（使用 memcpy 以避免别名和对齐问题）
+          std::memcpy(&packet.offset, &raw[4], sizeof(float));
+
+          // 解析 checksum（little-endian）
+          packet.checksum = static_cast<uint16_t>(raw[8]) |
+                            (static_cast<uint16_t>(raw[9]) << 8);
+
+          // 发布字段
+          std_msgs::msg::UInt8 comp_msg;
+          comp_msg.data = packet.competition_mode_;
+          competition_mode_pub_->publish(comp_msg);
+
+          std_msgs::msg::UInt8 dart_msg;
+          dart_msg.data = packet.dart_id;
+          dart_pub_->publish(dart_msg);
+
+          std_msgs::msg::Float32 offset_msg;
+          offset_msg.data = packet.offset;
+          offset_pub_->publish(offset_msg);
+
+          RCLCPP_DEBUG(get_logger(), "Parsed packet: mode=%u, dart_id=%u, offset=%.3f",
+                       packet.mode, packet.dart_id, packet.offset);
         }
         else
         {
-          // 包头不对就丢弃
-          RCLCPP_WARN_THROTTLE(this->get_logger(), *get_clock(), 20.0,
+          RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 2000,
                                "Invalid header: 0x%02X", header);
         }
       }
-      catch (const std::exception &ex)
+      catch (const std::exception &e)
       {
-        RCLCPP_ERROR_THROTTLE(this->get_logger(), *get_clock(), 20.0,
-                              "Error while receiving data: %s", ex.what());
+        RCLCPP_ERROR(get_logger(), "Serial read error: %s", e.what());
         reopenPort();
       }
     }

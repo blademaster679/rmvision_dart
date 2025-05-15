@@ -12,6 +12,7 @@
 #include <rclcpp/subscription.hpp>
 #include <serial_driver/serial_driver.hpp>
 #include <std_msgs/msg/float64.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/u_int8.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <visualization_msgs/msg/marker.hpp>
@@ -81,6 +82,8 @@ namespace rm_serial_driver
 
     // --- 新增：比赛模式发布 ---
     rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr competition_mode_pub_;
+    // <<< NEW: publisher for incoming offset >>>
+    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr offset_pub_;
 
     std::thread receive_thread_;
 

@@ -17,6 +17,7 @@ struct ReceivePacket
   uint8_t competition_mode_;
   uint8_t dart_id;
   uint8_t mode;
+  float offset;
   uint16_t checksum = 0;
 } __attribute__((packed));
 
