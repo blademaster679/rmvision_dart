@@ -123,7 +123,7 @@ namespace rm_auto_aim_dart
                             "Competition mode updated: %u", competition_mode_);
             });
 
-        // <<< NEW: subscribe to serial offset >>>
+        // <<< NEW: subscribe to serial offset >>> 将改动offset的部分交给电控，便于短时间内操作
         offset_sub_ = this->create_subscription<std_msgs::msg::Float32>(
             "offset", rclcpp::SensorDataQoS(),
             [this](const std_msgs::msg::Float32::SharedPtr msg)
@@ -334,14 +334,7 @@ namespace rm_auto_aim_dart
                 // 2. 卡尔曼滤波更新
                 double smooth_angle = angle_filter_.update(raw_angle);
 
-                // // 3. 发布平滑后的结果（保持原有的0.7偏移）
-                // // **新增：根据当前 dart_id 读取偏移**
-                // double offset = 0.0;
-                // auto it = dart_offset_map_.find(current_dart_id_);
-                // if (it != dart_offset_map_.end())
-                // {
-                //     offset = it->second;
-                // }
+                // // 3. 发布平滑后的结果
 
                 // <<< UPDATED: use serial offset >>>
                 send_msg.distance = raw_dist;
@@ -350,9 +343,6 @@ namespace rm_auto_aim_dart
                 send_pub_->publish(send_msg);
 
                 prev_angle_ = raw_angle;
-                // send_msg.distance = light.distance;
-                // send_msg.angle = light.angle + 0.7;
-                // send_pub_->publish(send_msg);
             }
             publishMarkers();
         }

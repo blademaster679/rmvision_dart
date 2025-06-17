@@ -9,7 +9,7 @@ namespace rm_auto_aim_dart
         {
             throw std::invalid_argument("Input image must be 3 or 4 channel image, either CV_8UC3 or CV_8UC4.");
         }
-        // 提取绿色通道,Opencv中BGR顺序
+        // 提取绿色通道,Opencv中BGR顺序  后续优化滤光方法：绿通道减红通道/2减蓝通道/2
         std::vector<cv::Mat> channels;
         cv::split(color_image, channels);
         this->green_channel = channels[1];
