@@ -13,6 +13,7 @@
 #include <serial_driver/serial_driver.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/u_int8.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <visualization_msgs/msg/marker.hpp>
@@ -84,6 +85,7 @@ namespace rm_serial_driver
 
     // --- 新增：比赛模式发布 ---
     rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr competition_mode_pub_;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr competition_start_signal_pub_;
     // --- 新增：目标ID发布 ---
     rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr target_id_pub_;
     // <<< NEW: publisher for incoming offset >>>

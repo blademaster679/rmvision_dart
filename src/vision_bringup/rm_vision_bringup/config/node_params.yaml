@@ -45,6 +45,7 @@
     camera_info_topic: /camera_info  # 双相机时 launch 覆盖为相对 topic camera_info
     send_topic: /Send  # 双相机时 launch 覆盖为 Send_pnp
     competition_mode_topic: competition_mode  # 双相机时 launch 覆盖为 /competition_mode
+    competition_start_signal_topic: competition_start_signal  # 串口新增的比赛开始字符信号；收到 R 也视为比赛开始
     target_id_topic: target_id  # 双相机时 launch 覆盖为 /target_id
     debug_lights_topic: debug_lights  # 双相机时 launch 覆盖为 detector/debug_lights
     debug_binary_img_topic: binary_img  # 双相机时 launch 覆盖为 detector/binary_img

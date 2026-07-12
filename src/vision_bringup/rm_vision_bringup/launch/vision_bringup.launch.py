@@ -146,6 +146,7 @@ def generate_launch_description():
             'serial_offset_topic': '/offset',
             'barcode_profile_topic': '/barcode/scan_profile',
             'competition_mode_topic': '/competition_mode',
+            'competition_start_signal_topic': '/competition_start_signal',
             'target_id_topic': '/target_id',
             'camera_optical_frame': camera_config['frame_id'],
             'debug_lights_topic': 'detector/debug_lights',
