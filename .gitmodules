@@ -1,7 +1,7 @@
 [submodule "src/hik-driver"]
     path = src/hik-driver
     url = https://github.com/PnX-HKUSTGZ/hik-driver.git
-    branch = dev
+    branch = dart
 [submodule "src/rm_gimbal_description"]
     path = src/rm_gimbal_description
     url = https://github.com/PnX-HKUSTGZ/rm_gimbal_description.git
