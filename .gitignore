@@ -1,5 +1,28 @@
+# ROS 2 / colcon build outputs
 build/
 log/
 install/
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# CMake generated files from accidental in-source builds
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# Editor and operating-system temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project-local generated content
 src/topic_recorder/docs/
-.codex
+.codex/
+.agents/
