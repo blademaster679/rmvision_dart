@@ -2,7 +2,7 @@
 set -e
 
 : "${WORKSPACE_DIR:=/home/pnx/pnx/rmvision_dart}"
-: "${LAUNCH_PARAMS_FILE:=$WORKSPACE_DIR/src/vision_bringup/rm_vision_bringup/config/launch_params.yaml}"
+: "${LAUNCH_PARAMS_FILE:=$WORKSPACE_DIR/src/rm_vision_bringup/config/launch_params.yaml}"
 : "${RECORD_START_DELAY_SEC:=15}"
 : "${ROSBAG_CACHE_SIZE_BYTES:=52428800}"
 : "${ROSBAG_CLOUD_HZ:=1.0}"

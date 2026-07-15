@@ -30,13 +30,13 @@ flowchart LR
     B --> D2
 ```
 
-`target_id=1` 选择基地目标，`target_id=0` 选择前哨站目标。具体 Topic 以 [vision_bringup.launch.py](../../src/vision_bringup/rm_vision_bringup/launch/vision_bringup.launch.py) 和 [node_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/node_params.yaml) 为准。
+`target_id=1` 选择基地目标，`target_id=0` 选择前哨站目标。具体 Topic 以 [vision_bringup.launch.py](../../src/rm_vision_bringup/launch/vision_bringup.launch.py) 和 [node_params.yaml](../../src/rm_vision_bringup/config/node_params.yaml) 为准。
 
 ## 3. 仓库导航
 
 | 目录 | 职责 | 建议先读 |
 | --- | --- | --- |
-| `src/vision_bringup` | 启动、命名空间、参数覆盖和硬件组织 | [vision_bringup.launch.py](../../src/vision_bringup/rm_vision_bringup/launch/vision_bringup.launch.py) |
+| `src/rm_vision_bringup` | 启动、命名空间、参数覆盖和硬件组织 | [vision_bringup.launch.py](../../src/rm_vision_bringup/launch/vision_bringup.launch.py) |
 | `src/auto_aim/light_detector` | 绿灯检测、PnP、角度滤波和调试图 | [detector_node.cpp](../../src/auto_aim/light_detector/src/detector_node.cpp) |
 | `src/rm_livox_fusion` | 点云累积、距离融合、舱门判断和目标选择 | [range_fusion_node.cpp](../../src/rm_livox_fusion/src/range_fusion_node.cpp) |
 | `src/auto_aim/auto_aim_interfaces` | 自定义消息 | [Send.msg](../../src/auto_aim/auto_aim_interfaces/msg/Send.msg) |
@@ -169,4 +169,3 @@ flowchart LR
 - 根据 `/Send` 和串口日志定位视觉与电控接口问题。
 - 使用 rosbag 和导出工具复现问题。
 - 提交包含实验数据、风险和回滚方式的修改。
-

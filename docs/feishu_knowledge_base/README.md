@@ -31,7 +31,7 @@
 - 点云累积与融合：[../../src/rm_livox_fusion](../../src/rm_livox_fusion)
 - 消息定义：[../../src/auto_aim/auto_aim_interfaces/msg](../../src/auto_aim/auto_aim_interfaces/msg)
 - 串口与扫码枪：[../../src/rm_serial_driver](../../src/rm_serial_driver)
-- Launch 与参数：[../../src/vision_bringup/rm_vision_bringup](../../src/vision_bringup/rm_vision_bringup)
+- Launch 与参数：[../../src/rm_vision_bringup](../../src/rm_vision_bringup)
 - 启动脚本：[../../dart.sh](../../dart.sh)、[../../dart.service](../../dart.service)
 - 内录与复盘：[../../RECORD](../../RECORD)
 
@@ -47,8 +47,7 @@
 
 ## 维护约定
 
-- 参数的具体当前值以 [launch_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/launch_params.yaml) 和 [node_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/node_params.yaml) 为准。
+- 参数的具体当前值以 [launch_params.yaml](../../src/rm_vision_bringup/config/launch_params.yaml) 和 [node_params.yaml](../../src/rm_vision_bringup/config/node_params.yaml) 为准。
 - 修改消息或串口字段时，同步更新接口说明、Q&A 和协议变更检查表。
 - 新增一次具有复用价值的故障修复后，在 [07_debug_records.md](07_debug_records.md) 增加记录。
 - 未经验证的想法放入 [06_development_candidates.md](06_development_candidates.md)，不要写入部署手册。
-

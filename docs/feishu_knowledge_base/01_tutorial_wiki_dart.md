@@ -16,10 +16,10 @@
 
 | 概念 | 项目入口 |
 | --- | --- |
-| 主 Launch | [vision_bringup.launch.py](../../src/vision_bringup/rm_vision_bringup/launch/vision_bringup.launch.py) |
-| 无硬件 Launch | [no_hardware.launch.py](../../src/vision_bringup/rm_vision_bringup/launch/no_hardware.launch.py) |
-| 结构与硬件参数 | [launch_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/launch_params.yaml) |
-| 节点行为参数 | [node_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/node_params.yaml) |
+| 主 Launch | [vision_bringup.launch.py](../../src/rm_vision_bringup/launch/vision_bringup.launch.py) |
+| 无硬件 Launch | [no_hardware.launch.py](../../src/rm_vision_bringup/launch/no_hardware.launch.py) |
+| 结构与硬件参数 | [launch_params.yaml](../../src/rm_vision_bringup/config/launch_params.yaml) |
+| 节点行为参数 | [node_params.yaml](../../src/rm_vision_bringup/config/node_params.yaml) |
 | 自定义消息 | [auto_aim_interfaces/msg](../../src/auto_aim/auto_aim_interfaces/msg) |
 
 > 学习检查：能够解释为什么双相机模式下 `node_params.yaml` 的部分默认 Topic、frame 和半径会被 Launch 覆盖。
@@ -52,7 +52,7 @@
 - 像素角与真实物理角不是同一个量。
 - 物理半径配置错误会按比例放大距离误差。
 
-对应代码：[pnp_solver.cpp](../../src/auto_aim/light_detector/src/pnp_solver.cpp)。相机标定文件位于 [config](../../src/vision_bringup/rm_vision_bringup/config)；部署时应根据真实硬件选择，不应把仓库中的某组现场值当成永久标准。
+对应代码：[pnp_solver.cpp](../../src/auto_aim/light_detector/src/pnp_solver.cpp)。相机标定文件位于 [config](../../src/rm_vision_bringup/config)；部署时应根据真实硬件选择，不应把仓库中的某组现场值当成永久标准。
 
 ## 4. 滤波与稳定性
 
@@ -159,4 +159,3 @@
 2. 区分像素角、真实角、纵向距离和横向距离。
 3. 解释为什么要同时保留图像、点云、状态 Topic 和日志。
 4. 根据现象判断问题更可能位于检测、外参、融合、串口还是部署层。
-

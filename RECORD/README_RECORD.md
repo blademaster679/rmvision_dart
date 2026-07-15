@@ -42,7 +42,7 @@
 - 根据这台车上可用硬盘的真实空间修改此数值（例如 20、50 或 100）。到达该阈值后将严格执行旧视频删除。
 
 ### 3. 控制新内录开关
-打开 `src/vision_bringup/rm_vision_bringup/config/launch_params.yaml`：
+打开 `src/rm_vision_bringup/config/launch_params.yaml`：
 ```yaml
 enable_rosbag_recorder: true
 rosbag_record_mode: active

@@ -43,7 +43,7 @@ CLOUD_TOPIC = "/livox/accum_points"
 SERIAL_LOGGER_TOPIC = "/serial/logger"
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-BRINGUP_CONFIG_DIR = REPO_ROOT / "src/vision_bringup/rm_vision_bringup/config"
+BRINGUP_CONFIG_DIR = REPO_ROOT / "src/rm_vision_bringup/config"
 
 
 def bag_uses_compression(bag_path):

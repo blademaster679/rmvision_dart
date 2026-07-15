@@ -16,7 +16,7 @@ git log --all --grep='<关键词>'
 | 修复 | 将轴配置写为带引号的显式字符串，例如 `"+x"`、`"+y"`、`"+z"` |
 | 验证 | 节点启动成功，日志中的轴映射符合 Livox 实际坐标系 |
 | 预防 | 对枚举参数增加启动校验；配置审查时检查 YAML 类型 |
-| 相关位置 | [node_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/node_params.yaml)、[range_fusion_node.cpp](../../src/rm_livox_fusion/src/range_fusion_node.cpp) |
+| 相关位置 | [node_params.yaml](../../src/rm_vision_bringup/config/node_params.yaml)、[range_fusion_node.cpp](../../src/rm_livox_fusion/src/range_fusion_node.cpp) |
 
 ## 2. 无目标后仍保留上一帧结果
 
@@ -69,7 +69,7 @@ git log --all --grep='<关键词>'
 | 修复 | 重新确认物理尺寸并更新对应参数；用多个已知距离验证 |
 | 验证 | 多距离下 PnP 误差趋势合理，融合的 PnP 距离门限也能正确工作 |
 | 预防 | 物理尺寸、镜头、相机内参和分辨率作为一组配置记录 |
-| 相关位置 | [pnp_solver.cpp](../../src/auto_aim/light_detector/src/pnp_solver.cpp)、[node_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/node_params.yaml) |
+| 相关位置 | [pnp_solver.cpp](../../src/auto_aim/light_detector/src/pnp_solver.cpp)、[node_params.yaml](../../src/rm_vision_bringup/config/node_params.yaml) |
 
 ## 7. 更换镜头后二值图全黑
 
@@ -175,4 +175,3 @@ git log --all --grep='<关键词>'
 - 预防措施和回滚方法。
 
 完整复盘可复制[赛后故障复盘模板](05_development_templates.md#赛后故障复盘模板)。
-

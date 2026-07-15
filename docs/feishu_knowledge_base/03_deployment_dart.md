@@ -82,7 +82,7 @@ sudo chmod 777 /dev/ttyUSB0
 
 ### `launch_params.yaml`
 
-[launch_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/launch_params.yaml)负责系统结构和硬件级配置：
+[launch_params.yaml](../../src/rm_vision_bringup/config/launch_params.yaml)负责系统结构和硬件级配置：
 
 - 相机启动模式。
 - 双相机角色、设备标识、相机名和标定文件。
@@ -93,7 +93,7 @@ sudo chmod 777 /dev/ttyUSB0
 
 ### `node_params.yaml`
 
-[node_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/node_params.yaml)负责节点行为：
+[node_params.yaml](../../src/rm_vision_bringup/config/node_params.yaml)负责节点行为：
 
 - 曝光、增益和串口参数。
 - 绿灯检测、PnP 和角度滤波。

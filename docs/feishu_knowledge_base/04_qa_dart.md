@@ -10,7 +10,7 @@
 | --- | --- |
 | 快速检查 | 相机是否被系统识别；序列号是否与角色对应；`camera_start_mode`；图像 Topic 是否存在；是否有其他进程占用设备 |
 | 常见原因 | 设备标识错误、USB/供电问题、Launch 只启用单相机、驱动异常、设备被旧进程占用 |
-| 处理 | 停止重复进程；核对 [launch_params.yaml](../../src/vision_bringup/rm_vision_bringup/config/launch_params.yaml)；单独验证相机驱动；重新插拔并确认供电 |
+| 处理 | 停止重复进程；核对 [launch_params.yaml](../../src/rm_vision_bringup/config/launch_params.yaml)；单独验证相机驱动；重新插拔并确认供电 |
 | 验证 | base/outpost 图像和 `camera_info` 均持续发布，角色与实际安装位置一致 |
 
 ### Q2：画面正常，但二值图全黑
@@ -135,7 +135,7 @@
 | --- | --- |
 | 快速检查 | 对应参数是否在 Launch 中按角色覆盖 |
 | 常见原因 | 把 `node_params.yaml` 的默认兜底值误认为最终值 |
-| 处理 | 检查 [vision_bringup.launch.py](../../src/vision_bringup/rm_vision_bringup/launch/vision_bringup.launch.py)，硬件关系和双相机半径优先改 `launch_params.yaml` |
+| 处理 | 检查 [vision_bringup.launch.py](../../src/rm_vision_bringup/launch/vision_bringup.launch.py)，硬件关系和双相机半径优先改 `launch_params.yaml` |
 | 验证 | 使用 `ros2 param get` 查看节点运行时最终参数 |
 
 ## 6. YAML 与配置
@@ -215,4 +215,3 @@
 | 常见原因 | `dart.service` 或手动启动的视觉程序已经连接雷达 |
 | 处理 | 先确认占用进程；在安全条件下停止视觉服务后再使用 Viewer |
 | 验证 | Viewer 能连接；重新启动视觉后 `/livox/lidar` 恢复 |
-

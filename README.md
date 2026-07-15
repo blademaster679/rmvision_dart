@@ -17,9 +17,9 @@
 ### 关键文件
 | 文件 | 用途 |
 | --- | --- |
-| `src/vision_bringup/rm_vision_bringup/config/launch_params.yaml` | 双相机、外参、新内录开关、录制模式、Livox 启动参数 |
-| `src/vision_bringup/rm_vision_bringup/config/node_params.yaml` | 检测、融合、滤波、扫码枪、debug 和延迟参数 |
-| `src/vision_bringup/rm_vision_bringup/launch/vision_bringup.launch.py` | 真机主 launch，按配置组织相机、检测、融合、串口等节点 |
+| `src/rm_vision_bringup/config/launch_params.yaml` | 双相机、外参、新内录开关、录制模式、Livox 启动参数 |
+| `src/rm_vision_bringup/config/node_params.yaml` | 检测、融合、滤波、扫码枪、debug 和延迟参数 |
+| `src/rm_vision_bringup/launch/vision_bringup.launch.py` | 真机主 launch，按配置组织相机、检测、融合、串口等节点 |
 | `src/auto_aim/auto_aim_interfaces/msg/Send.msg` | 视觉到串口的核心输出消息 |
 | `src/rm_serial_driver/include/packet.hpp` | 串口发送包结构 |
 | `RECORD/selective_rosbag_recorder.py` | 新内录录制器，负责选择性写入 topic |
@@ -34,7 +34,7 @@ src/
   rm_livox_fusion/               # 点云累积、ROI/角门限筛选、距离融合
   rm_serial_driver/              # 串口收发、延迟统计、扫码枪
   rm_gimbal_description/         # URDF / TF
-  vision_bringup/                # launch 与 YAML 参数
+  rm_vision_bringup/             # launch 与 YAML 参数
   video_reader/                  # 无硬件视频回放
   topic_recorder/                # 旧内录节点，当前已弃用
 RECORD/                          # 新 rosbag 内录、空间清理与赛后导出脚本
