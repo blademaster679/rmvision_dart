@@ -72,6 +72,7 @@ active_camera_params = base_camera_params
 
 robot_description = Command(['xacro ', os.path.join(
     get_package_share_directory('rm_gimbal_description'), 'urdf', 'rm_gimbal.urdf.xacro'),
+    f' camera_name:="{base_camera_config["camera_name"]}"',
     f' xyz:="{launch_params["odom2camera"]["xyz"]}"',
     f' rpy:="{launch_params["odom2camera"]["rpy"]}"',])
 
