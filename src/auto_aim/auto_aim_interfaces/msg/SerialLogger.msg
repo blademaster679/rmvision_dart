@@ -12,5 +12,6 @@ uint8 vision_light_detected
 uint8 vision_stable_state
 bool door_session_active
 bool autoaim_allow
+bool door_close_inhibit_active
 float32 string_l_force
 float32 string_r_force

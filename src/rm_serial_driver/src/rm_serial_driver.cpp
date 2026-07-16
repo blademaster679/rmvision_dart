@@ -22,6 +22,7 @@
 
 #include "../include/crc.hpp"
 #include "../include/packet.hpp"
+#include "../include/packet_parser.hpp"
 #include "../include/rm_serial_driver.hpp"
 #include "auto_aim_interfaces/msg/send.hpp"
 
@@ -128,85 +129,64 @@ namespace rm_serial_driver
     }
   }
 
-  void RMSerialDriver::receiveData()
-  {
-    constexpr size_t RECEIVE_PACKET_SIZE = sizeof(ReceivePacket);
-    constexpr size_t LOGGER_PACKET_SIZE = sizeof(LoggerPacket);
-    std::vector<uint8_t> header_buf(1);
+  void RMSerialDriver::receiveData() {
+    std::vector<uint8_t> byte_buf(1);
+    PacketParser parser;
 
-    while (rclcpp::ok())
-    {
-      try
-      {
-        serial_driver_->port()->receive(header_buf);
-        uint8_t header = header_buf[0];
-        
-        if (header == kReceiveHeader)
-        {
-          std::vector<uint8_t> buf(RECEIVE_PACKET_SIZE - 1); // exclude header
-          serial_driver_->port()->receive(buf);
+    while (rclcpp::ok()) {
+      try {
+        const auto bytes_read = serial_driver_->port()->receive(byte_buf);
+        if (bytes_read == 0) {
+          continue;
+        }
+        parser.append(byte_buf.data(), bytes_read);
 
+        while (rclcpp::ok()) {
           std::vector<uint8_t> raw;
-          raw.reserve(RECEIVE_PACKET_SIZE);
-          raw.push_back(header);
-          raw.insert(raw.end(), buf.begin(), buf.end());
+          uint8_t failed_header = 0;
+          const auto status = parser.nextFrame(raw, failed_header);
 
-          if (!crc16::Verify_CRC16_Check_Sum(raw.data(), raw.size()))
-          {
+          if (status == ParseStatus::kNeedMoreData) {
+            break;
+          }
+          if (status == ParseStatus::kCrcFailure) {
+            const char *packet_name = failed_header == kReceiveHeader
+                                          ? "ReceivePacket"
+                                          : "LoggerPacket";
             RCLCPP_WARN_THROTTLE(
-                get_logger(), *get_clock(), 2000, "ReceivePacket CRC16 verification failed.");
+                get_logger(), *get_clock(), 2000,
+                "%s CRC16 verification failed; resynchronizing stream.",
+                packet_name);
             continue;
           }
 
-          // 手动解析字段
-          ReceivePacket packet;
-          packet.header = raw[0];
-          packet.target_id_ = raw[1];
-          packet.dart_id = raw[2];
-          // 解析 float offset（使用 memcpy 以避免别名和对齐问题）
-          std::memcpy(&packet.offset, &raw[3], sizeof(float));
+          if (raw.front() == kReceiveHeader) {
+            ReceivePacket packet;
+            std::memcpy(&packet, raw.data(), sizeof(packet));
 
-          // 解析 checksum（little-endian）
-          packet.checksum = static_cast<uint16_t>(raw[7]) |
-                            (static_cast<uint16_t>(raw[8]) << 8);
+            std_msgs::msg::UInt8 dart_msg;
+            dart_msg.data = packet.dart_id;
+            dart_pub_->publish(dart_msg);
+            if (has_received_dart_id_.load(std::memory_order_relaxed) &&
+                packet.dart_id !=
+                    last_received_dart_id_.load(std::memory_order_relaxed)) {
+              dart_id_changed_pending_.store(true, std::memory_order_relaxed);
+            }
+            last_received_dart_id_.store(packet.dart_id,
+                                         std::memory_order_relaxed);
+            has_received_dart_id_.store(true, std::memory_order_relaxed);
 
+            std_msgs::msg::UInt8 target_msg;
+            target_msg.data = packet.target_id_;
+            target_id_pub_->publish(target_msg);
 
-          std_msgs::msg::UInt8 dart_msg;
-          dart_msg.data = packet.dart_id;
-          dart_pub_->publish(dart_msg);
-          if (has_received_dart_id_.load(std::memory_order_relaxed) &&
-              packet.dart_id != last_received_dart_id_.load(std::memory_order_relaxed))
-          {
-            dart_id_changed_pending_.store(true, std::memory_order_relaxed);
-          }
-          last_received_dart_id_.store(packet.dart_id, std::memory_order_relaxed);
-          has_received_dart_id_.store(true, std::memory_order_relaxed);
+            std_msgs::msg::Float32 offset_msg;
+            offset_msg.data = packet.offset;
+            offset_pub_->publish(offset_msg);
 
-          std_msgs::msg::UInt8 target_msg;
-          target_msg.data = packet.target_id_;
-          target_id_pub_->publish(target_msg);
-
-          std_msgs::msg::Float32 offset_msg;
-          offset_msg.data = packet.offset;
-          offset_pub_->publish(offset_msg);
-
-          RCLCPP_DEBUG(get_logger(),
-                       "Parsed packet: target_id=%u, dart_id=%u, offset=%.3f", packet.target_id_, packet.dart_id, packet.offset);
-        }
-        else if (header == kLoggerHeader)
-        {
-          std::vector<uint8_t> buf(LOGGER_PACKET_SIZE - 1); // exclude header
-          serial_driver_->port()->receive(buf);
-
-          std::vector<uint8_t> raw;
-          raw.reserve(LOGGER_PACKET_SIZE);
-          raw.push_back(header);
-          raw.insert(raw.end(), buf.begin(), buf.end());
-
-          if (!crc16::Verify_CRC16_Check_Sum(raw.data(), raw.size()))
-          {
-            RCLCPP_WARN_THROTTLE(
-                get_logger(), *get_clock(), 2000, "LoggerPacket CRC16 verification failed.");
+            RCLCPP_DEBUG(get_logger(),
+                         "Parsed packet: target_id=%u, dart_id=%u, offset=%.3f",
+                         packet.target_id_, packet.dart_id, packet.offset);
             continue;
           }
 
@@ -229,40 +209,31 @@ namespace rm_serial_driver
           msg.vision_stable_state = packet.vision_stable_state;
           msg.door_session_active = packet.door_session_active != 0;
           msg.autoaim_allow = packet.autoaim_allow != 0;
+          msg.door_close_inhibit_active = packet.door_close_inhibit_active != 0;
           msg.string_l_force = packet.string_L_force;
           msg.string_r_force = packet.string_R_force;
           serial_logger_pub_->publish(msg);
 
-          RCLCPP_DEBUG(
-              get_logger(),
-              "Parsed logger packet: state=%u, prepare=%u, station=%u, finished=%u, "
-              "fired=%u, shot=%u, dart=%u, door=%u, last_light=%u, vision_light=%u, "
-              "vision_stable=%u, door_session=%u, autoaim_allow=%u, force_l=%.3f, force_r=%.3f",
-              packet.state,
-              packet.prepare_state,
-              packet.launch_station_status,
-              packet.is_fire_finished,
-              packet.fired_count_this_open,
-              packet.current_shot_number,
-              packet.current_dart_id,
-              packet.door_status,
-              packet.last_light_detected,
-              packet.vision_light_detected,
-              packet.vision_stable_state,
-              packet.door_session_active,
-              packet.autoaim_allow,
-              packet.string_L_force,
-              packet.string_R_force);
+          RCLCPP_DEBUG(get_logger(),
+                       "Parsed logger packet: state=%u, prepare=%u, "
+                       "station=%u, finished=%u, "
+                       "fired=%u, shot=%u, dart=%u, door=%u, last_light=%u, "
+                       "vision_light=%u, "
+                       "vision_stable=%u, door_session=%u, autoaim_allow=%u, "
+                       "door_close_inhibit=%u, "
+                       "force_l=%.3f, force_r=%.3f",
+                       packet.state, packet.prepare_state,
+                       packet.launch_station_status, packet.is_fire_finished,
+                       packet.fired_count_this_open, packet.current_shot_number,
+                       packet.current_dart_id, packet.door_status,
+                       packet.last_light_detected, packet.vision_light_detected,
+                       packet.vision_stable_state, packet.door_session_active,
+                       packet.autoaim_allow, packet.door_close_inhibit_active,
+                       packet.string_L_force, packet.string_R_force);
         }
-        else
-        {
-          RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 2000,
-                               "Invalid header: 0x%02X", header);
-        }
-      }
-      catch (const std::exception &e)
-      {
+      } catch (const std::exception &e) {
         RCLCPP_ERROR(get_logger(), "Serial read error: %s", e.what());
+        parser = PacketParser{};
         reopenPort();
       }
     }
