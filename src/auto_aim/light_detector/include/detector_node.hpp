@@ -91,8 +91,6 @@ namespace rm_auto_aim_dart
         std::string image_topic_{"/image_raw"};
         std::string camera_info_topic_{"/camera_info"};
         std::string send_topic_{"/Send"};
-        std::string competition_mode_topic_{"competition_mode"};
-        std::string competition_start_signal_topic_{"competition_start_signal"};
         std::string target_id_topic_{"target_id"};
         std::string debug_lights_topic_{"debug_lights"};
         std::string debug_binary_img_topic_{"binary_img"};
@@ -157,12 +155,6 @@ namespace rm_auto_aim_dart
         double jump_threshold_{0.03}; // 运动切换阈值（rad）
         double Q_big_{1.0}, Q_small_{1e-3};
         double R_angle_;
-
-        // --- 新增：比赛模式开关 ---
-        uint8_t competition_mode_{0};
-        bool competition_start_signal_ready_{false};
-        rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr competition_sub_;
-        rclcpp::Subscription<std_msgs::msg::String>::SharedPtr competition_start_signal_sub_;
 
         // --- 新增：目标ID订阅，用于动态设置半径阈值 ---
         uint8_t target_id_{1};

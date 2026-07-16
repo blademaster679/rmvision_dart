@@ -31,7 +31,6 @@ TOPIC_TYPES = {
     "/target_id": (UInt8, "std_msgs/msg/UInt8"),
     "/current_dart_id": (UInt8, "std_msgs/msg/UInt8"),
     "/offset": (Float32, "std_msgs/msg/Float32"),
-    "/competition_mode": (UInt8, "std_msgs/msg/UInt8"),
     "/serial/logger": (SerialLogger, "auto_aim_interfaces/msg/SerialLogger"),
     "/rosout": (Log, "rcl_interfaces/msg/Log"),
 }
@@ -55,7 +54,6 @@ SMALL_TOPICS = [
     "/target_id",
     "/current_dart_id",
     "/offset",
-    "/competition_mode",
     "/serial/logger",
     "/rosout",
 ]

@@ -47,7 +47,7 @@ RECORD/                          # 新 rosbag 内录、空间清理与赛后导�
 3. `cloud_accumulator_node` 将 `/livox/lidar` 在 `odom` 下滑窗累积后发布 `/livox/accum_points`。
 4. `range_fusion_node` 订阅 `Send_pnp` 与 `/livox/accum_points`，输出 `Send_fused`。
 5. `send_mux` 根据 `/target_id` 选择 base 或 outpost 的融合结果，发布最终 `/Send`。
-6. `rm_serial_driver` 读取 `/Send` 并打包发送给电控，同时接收 `target_id / dart_id / offset / competition_mode`。
+6. `rm_serial_driver` 读取 `/Send` 并打包发送给电控，同时接收 `target_id / dart_id / offset`。
 7. `barcode_scanner_node` 可选接入扫码枪，给 `light_detector` 提供飞镖编号和偏置角缓存。
 
 当前真机以双相机模式运行：

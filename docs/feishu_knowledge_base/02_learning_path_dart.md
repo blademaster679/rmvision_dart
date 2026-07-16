@@ -24,8 +24,8 @@ flowchart LR
     E[电控下发 target_id] --> M
     M -->|/Send| S[rm_serial_driver]
     S -->|串口发送| MCU[电控]
-    S -->|dart_id / offset / competition_mode| D1
-    S -->|dart_id / offset / competition_mode| D2
+    S -->|dart_id / offset| D1
+    S -->|dart_id / offset| D2
     B[扫码枪 可选] --> D1
     B --> D2
 ```
@@ -120,7 +120,7 @@ flowchart LR
 
 1. 对照 [packet.hpp](../../src/rm_serial_driver/include/packet.hpp)列出收包、发包和日志包。
 2. 在 [rm_serial_driver.cpp](../../src/rm_serial_driver/src/rm_serial_driver.cpp)中追踪 `/Send` 如何转换成发送包。
-3. 追踪电控下发的 `target_id`、`dart_id`、`offset` 和 `competition_mode` 如何发布到 ROS 2。
+3. 追踪电控下发的 `target_id`、`dart_id`、`offset` 如何发布到 ROS 2。
 4. 阅读 [barcode_scanner.cpp](../../src/rm_serial_driver/src/barcode_scanner.cpp)，理解扫码数据格式、范围校验和槽位缓存。
 
 ## 8. 第五阶段：完成一次闭环实验
@@ -155,7 +155,6 @@ flowchart LR
 | `/target_id` | 当前目标选择 |
 | `/current_dart_id` | 当前飞镖编号 |
 | `/offset` | 偏置角 |
-| `/competition_mode` | 比赛状态 |
 | `/barcode/scan_profile` | 扫码枪解析结果 |
 | `/latency` | 图像到串口发送的总链路延迟 |
 

@@ -33,15 +33,6 @@ namespace rm_serial_driver
     constexpr uint8_t kLoggerHeader = 0xD5;
     constexpr uint8_t kLightVisible = 1;
     constexpr float kNoTargetAngle = 666.0f;
-    constexpr uint8_t kCompetitionStartMode = 4;
-    constexpr char kCompetitionStartReady = 'R';
-    constexpr char kCompetitionStartReadyLower = 'r';
-
-    bool isCompetitionStartSignal(char value)
-    {
-      return value == kCompetitionStartReady ||
-             value == kCompetitionStartReadyLower;
-    }
   }
 
   RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions &options)
@@ -68,11 +59,6 @@ namespace rm_serial_driver
     marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("/aiming_point", 10);
     dart_pub_ = this->create_publisher<std_msgs::msg::UInt8>("current_dart_id", 10);
 
-    // --- 新增：初始化比赛模式 publisher ---
-    competition_mode_pub_ =
-        this->create_publisher<std_msgs::msg::UInt8>("competition_mode", 10);
-    competition_start_signal_pub_ =
-        this->create_publisher<std_msgs::msg::String>("competition_start_signal", 10);
     // --- 新增：初始化目标ID publisher ---
     target_id_pub_ =
         this->create_publisher<std_msgs::msg::UInt8>("target_id", 10);
@@ -154,27 +140,7 @@ namespace rm_serial_driver
       {
         serial_driver_->port()->receive(header_buf);
         uint8_t header = header_buf[0];
-        const auto publish_competition_state = [this](uint8_t mode, char start_signal) {
-          std_msgs::msg::UInt8 comp_msg;
-          comp_msg.data = mode;
-          competition_mode_pub_->publish(comp_msg);
-
-          std_msgs::msg::String start_msg;
-          if (start_signal != '\0')
-          {
-            start_msg.data = std::string(1, start_signal);
-          }
-          competition_start_signal_pub_->publish(start_msg);
-
-          if (mode == kCompetitionStartMode || isCompetitionStartSignal(start_signal))
-          {
-            RCLCPP_INFO_THROTTLE(
-                get_logger(), *get_clock(), 1000,
-                "Competition start state received: mode=%u, signal='%s'",
-                mode, start_msg.data.c_str());
-          }
-        };
-
+        
         if (header == kReceiveHeader)
         {
           std::vector<uint8_t> buf(RECEIVE_PACKET_SIZE - 1); // exclude header
@@ -195,19 +161,15 @@ namespace rm_serial_driver
           // 手动解析字段
           ReceivePacket packet;
           packet.header = raw[0];
-          packet.competition_mode_ = raw[1];
-          packet.competition_start_signal = static_cast<char>(raw[2]);
-          packet.target_id_ = raw[3];
-          packet.dart_id = raw[4];
+          packet.target_id_ = raw[1];
+          packet.dart_id = raw[2];
           // 解析 float offset（使用 memcpy 以避免别名和对齐问题）
-          std::memcpy(&packet.offset, &raw[5], sizeof(float));
+          std::memcpy(&packet.offset, &raw[3], sizeof(float));
 
           // 解析 checksum（little-endian）
-          packet.checksum = static_cast<uint16_t>(raw[9]) |
-                            (static_cast<uint16_t>(raw[10]) << 8);
+          packet.checksum = static_cast<uint16_t>(raw[7]) |
+                            (static_cast<uint16_t>(raw[8]) << 8);
 
-          // 发布字段
-          publish_competition_state(packet.competition_mode_, packet.competition_start_signal);
 
           std_msgs::msg::UInt8 dart_msg;
           dart_msg.data = packet.dart_id;
@@ -229,9 +191,7 @@ namespace rm_serial_driver
           offset_pub_->publish(offset_msg);
 
           RCLCPP_DEBUG(get_logger(),
-                       "Parsed packet: competition_mode=%u, start_signal='%c', target_id=%u, dart_id=%u, offset=%.3f",
-                       packet.competition_mode_, packet.competition_start_signal,
-                       packet.target_id_, packet.dart_id, packet.offset);
+                       "Parsed packet: target_id=%u, dart_id=%u, offset=%.3f", packet.target_id_, packet.dart_id, packet.offset);
         }
         else if (header == kLoggerHeader)
         {

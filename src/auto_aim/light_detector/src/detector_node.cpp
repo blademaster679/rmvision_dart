@@ -131,10 +131,6 @@ namespace rm_auto_aim_dart
             this->declare_parameter<std::string>("camera_info_topic", "/camera_info");
         send_topic_ =
             this->declare_parameter<std::string>("send_topic", "/Send");
-        competition_mode_topic_ =
-            this->declare_parameter<std::string>("competition_mode_topic", "competition_mode");
-        competition_start_signal_topic_ =
-            this->declare_parameter<std::string>("competition_start_signal_topic", "competition_start_signal");
         target_id_topic_ =
             this->declare_parameter<std::string>("target_id_topic", "target_id");
         debug_lights_topic_ =
@@ -211,27 +207,6 @@ namespace rm_auto_aim_dart
                 {
                     updateActiveBarcodeProfile();
                 }
-            });
-
-        // 订阅比赛模式
-        competition_sub_ = this->create_subscription<std_msgs::msg::UInt8>(
-            competition_mode_topic_,
-            rclcpp::SensorDataQoS(),
-            [this](std_msgs::msg::UInt8::SharedPtr msg)
-            {
-                competition_mode_ = msg->data;
-                RCLCPP_INFO(this->get_logger(),
-                            "Competition mode updated: %u", competition_mode_);
-            });
-        competition_start_signal_sub_ = this->create_subscription<std_msgs::msg::String>(
-            competition_start_signal_topic_,
-            rclcpp::SensorDataQoS(),
-            [this](const std_msgs::msg::String::SharedPtr msg)
-            {
-                competition_start_signal_ready_ = msg->data == "R" || msg->data == "r";
-                RCLCPP_INFO(this->get_logger(),
-                            "Competition start signal updated: '%s' ready=%d",
-                            msg->data.c_str(), competition_start_signal_ready_ ? 1 : 0);
             });
 
         // 订阅目标 ID，用于动态设置半径阈值
@@ -656,14 +631,6 @@ namespace rm_auto_aim_dart
 
     void LightDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &img_msg)
     {
-        // 未到比赛开始，不处理
-        if (competition_mode_ != 4 && !competition_start_signal_ready_)
-        {
-            RCLCPP_DEBUG(this->get_logger(),
-                         "Skipping detection, mode=%u, start_signal_ready=%d",
-                         competition_mode_, competition_start_signal_ready_ ? 1 : 0);
-            return;
-        }
         if (enable_target_gate_ && target_id_ != active_target_id_)
         {
             RCLCPP_DEBUG_THROTTLE(
