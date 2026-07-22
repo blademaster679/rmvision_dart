@@ -11,14 +11,14 @@
 
 // C++ system
 #include <cstdint>
+#include <cstring>
 #include <functional>
+#include <iomanip>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <iomanip>
-#include <cstring>
 
 #include "../include/crc.hpp"
 #include "../include/packet.hpp"
@@ -28,27 +28,26 @@
 
 namespace rm_serial_driver
 {
-  namespace
-  {
-    constexpr uint8_t kReceiveHeader = 0x5A;
-    constexpr uint8_t kLoggerHeader = 0xD5;
-    constexpr uint8_t kLightVisible = 1;
-    constexpr float kNoTargetAngle = 666.0f;
-  }
+namespace
+{
+constexpr uint8_t kReceiveHeader = 0x5A;
+constexpr uint8_t kLoggerHeader = 0xD5;
+constexpr uint8_t kLightVisible = 1;
+constexpr float kNoTargetAngle = 666.0f;
+}  // namespace
 
-  RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions &options)
-      : Node("rm_serial_driver", options),
-        owned_ctx_{new IoContext(2)},
-        serial_driver_{new drivers::serial_driver::SerialDriver(*owned_ctx_)}
-  {
+RMSerialDriver::RMSerialDriver(const rclcpp::NodeOptions & options)
+: Node("rm_serial_driver", options),
+  owned_ctx_{new IoContext(2)},
+  serial_driver_{new drivers::serial_driver::SerialDriver(*owned_ctx_)}
+{
     RCLCPP_INFO(get_logger(), "Start RMSerialDriver!");
 
     getParams();
-    if (force_stability_)
-    {
-      RCLCPP_WARN(
-          get_logger(),
-          "force_stability is enabled: outgoing stability will always be sent as 1.");
+    if (force_stability_) {
+        RCLCPP_WARN(
+            get_logger(),
+            "force_stability is enabled: outgoing stability will always be sent as 1.");
     }
 
     // TF broadcaster
@@ -61,35 +60,30 @@ namespace rm_serial_driver
     dart_pub_ = this->create_publisher<std_msgs::msg::UInt8>("current_dart_id", 10);
 
     // --- 新增：初始化目标ID publisher ---
-    target_id_pub_ =
-        this->create_publisher<std_msgs::msg::UInt8>("target_id", 10);
+    target_id_pub_ = this->create_publisher<std_msgs::msg::UInt8>("target_id", 10);
 
     // <<< NEW: initialize offset publisher >>>
     offset_pub_ = this->create_publisher<std_msgs::msg::Float32>("offset", 10);
-    serial_logger_pub_ =
-        this->create_publisher<auto_aim_interfaces::msg::SerialLogger>(
-            "/serial/logger", rclcpp::SensorDataQoS());
+    serial_logger_pub_ = this->create_publisher<auto_aim_interfaces::msg::SerialLogger>(
+        "/serial/logger", rclcpp::SensorDataQoS());
 
     // Detect parameter client
-    detector_param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "light_detector");
+    detector_param_client_ =
+        std::make_shared<rclcpp::AsyncParametersClient>(this, "light_detector");
 
     // Tracker reset service client
     reset_tracker_client_ = this->create_client<std_srvs::srv::Trigger>("/tracker/reset");
 
-    try
-    {
-      serial_driver_->init_port(device_name_, *device_config_);
-      if (!serial_driver_->port()->is_open())
-      {
-        serial_driver_->port()->open();
-        receive_thread_ = std::thread(&RMSerialDriver::receiveData, this);
-      }
-    }
-    catch (const std::exception &ex)
-    {
-      RCLCPP_ERROR(
-          get_logger(), "Error creating serial port: %s - %s", device_name_.c_str(), ex.what());
-      throw ex;
+    try {
+        serial_driver_->init_port(device_name_, *device_config_);
+        if (!serial_driver_->port()->is_open()) {
+            serial_driver_->port()->open();
+            receive_thread_ = std::thread(&RMSerialDriver::receiveData, this);
+        }
+    } catch (const std::exception & ex) {
+        RCLCPP_ERROR(
+            get_logger(), "Error creating serial port: %s - %s", device_name_.c_str(), ex.what());
+        throw ex;
     }
 
     aiming_point_.header.frame_id = "odom";
@@ -109,219 +103,203 @@ namespace rm_serial_driver
     target_sub_ = this->create_subscription<auto_aim_interfaces::msg::Send>(
         "/Send", rclcpp::SensorDataQoS(),
         std::bind(&RMSerialDriver::sendData, this, std::placeholders::_1));
-  }
+}
 
-  RMSerialDriver::~RMSerialDriver()
-  {
-    if (receive_thread_.joinable())
-    {
-      receive_thread_.join();
+RMSerialDriver::~RMSerialDriver()
+{
+    if (receive_thread_.joinable()) {
+        receive_thread_.join();
     }
 
-    if (serial_driver_->port()->is_open())
-    {
-      serial_driver_->port()->close();
+    if (serial_driver_->port()->is_open()) {
+        serial_driver_->port()->close();
     }
 
-    if (owned_ctx_)
-    {
-      owned_ctx_->waitForExit();
+    if (owned_ctx_) {
+        owned_ctx_->waitForExit();
     }
-  }
+}
 
-  void RMSerialDriver::receiveData() {
+void RMSerialDriver::receiveData()
+{
     std::vector<uint8_t> byte_buf(1);
     PacketParser parser;
 
     while (rclcpp::ok()) {
-      try {
-        const auto bytes_read = serial_driver_->port()->receive(byte_buf);
-        if (bytes_read == 0) {
-          continue;
-        }
-        parser.append(byte_buf.data(), bytes_read);
-
-        while (rclcpp::ok()) {
-          std::vector<uint8_t> raw;
-          uint8_t failed_header = 0;
-          const auto status = parser.nextFrame(raw, failed_header);
-
-          if (status == ParseStatus::kNeedMoreData) {
-            break;
-          }
-          if (status == ParseStatus::kCrcFailure) {
-            const char *packet_name = failed_header == kReceiveHeader
-                                          ? "ReceivePacket"
-                                          : "LoggerPacket";
-            RCLCPP_WARN_THROTTLE(
-                get_logger(), *get_clock(), 2000,
-                "%s CRC16 verification failed; resynchronizing stream.",
-                packet_name);
-            continue;
-          }
-
-          if (raw.front() == kReceiveHeader) {
-            ReceivePacket packet;
-            std::memcpy(&packet, raw.data(), sizeof(packet));
-
-            std_msgs::msg::UInt8 dart_msg;
-            dart_msg.data = packet.dart_id;
-            dart_pub_->publish(dart_msg);
-            if (has_received_dart_id_.load(std::memory_order_relaxed) &&
-                packet.dart_id !=
-                    last_received_dart_id_.load(std::memory_order_relaxed)) {
-              dart_id_changed_pending_.store(true, std::memory_order_relaxed);
+        try {
+            const auto bytes_read = serial_driver_->port()->receive(byte_buf);
+            if (bytes_read == 0) {
+                continue;
             }
-            last_received_dart_id_.store(packet.dart_id,
-                                         std::memory_order_relaxed);
-            has_received_dart_id_.store(true, std::memory_order_relaxed);
+            parser.append(byte_buf.data(), bytes_read);
 
-            std_msgs::msg::UInt8 target_msg;
-            target_msg.data = packet.target_id_;
-            target_id_pub_->publish(target_msg);
+            while (rclcpp::ok()) {
+                std::vector<uint8_t> raw;
+                uint8_t failed_header = 0;
+                const auto status = parser.nextFrame(raw, failed_header);
 
-            std_msgs::msg::Float32 offset_msg;
-            offset_msg.data = packet.offset;
-            offset_pub_->publish(offset_msg);
+                if (status == ParseStatus::kNeedMoreData) {
+                    break;
+                }
+                if (status == ParseStatus::kCrcFailure) {
+                    const char * packet_name =
+                        failed_header == kReceiveHeader ? "ReceivePacket" : "LoggerPacket";
+                    RCLCPP_WARN_THROTTLE(
+                        get_logger(), *get_clock(), 2000,
+                        "%s CRC16 verification failed; resynchronizing stream.", packet_name);
+                    continue;
+                }
 
-            RCLCPP_DEBUG(get_logger(),
-                         "Parsed packet: target_id=%u, dart_id=%u, offset=%.3f",
-                         packet.target_id_, packet.dart_id, packet.offset);
-            continue;
-          }
+                if (raw.front() == kReceiveHeader) {
+                    ReceivePacket packet;
+                    std::memcpy(&packet, raw.data(), sizeof(packet));
 
-          LoggerPacket packet;
-          std::memcpy(&packet, raw.data(), sizeof(packet));
+                    std_msgs::msg::UInt8 dart_msg;
+                    dart_msg.data = packet.dart_id;
+                    dart_pub_->publish(dart_msg);
+                    if (has_received_dart_id_.load(std::memory_order_relaxed) &&
+                        packet.dart_id != last_received_dart_id_.load(std::memory_order_relaxed)) {
+                        dart_id_changed_pending_.store(true, std::memory_order_relaxed);
+                    }
+                    last_received_dart_id_.store(packet.dart_id, std::memory_order_relaxed);
+                    has_received_dart_id_.store(true, std::memory_order_relaxed);
 
-          auto_aim_interfaces::msg::SerialLogger msg;
-          msg.header.stamp = now();
-          msg.header.frame_id = "serial";
-          msg.state = packet.state;
-          msg.prepare_state = packet.prepare_state;
-          msg.launch_station_status = packet.launch_station_status;
-          msg.is_fire_finished = packet.is_fire_finished != 0;
-          msg.fired_count_this_open = packet.fired_count_this_open;
-          msg.current_shot_number = packet.current_shot_number;
-          msg.current_dart_id = packet.current_dart_id;
-          msg.door_status = packet.door_status;
-          msg.last_light_detected = packet.last_light_detected;
-          msg.vision_light_detected = packet.vision_light_detected;
-          msg.vision_stable_state = packet.vision_stable_state;
-          msg.door_session_active = packet.door_session_active != 0;
-          msg.autoaim_allow = packet.autoaim_allow != 0;
-          msg.door_close_inhibit_active = packet.door_close_inhibit_active != 0;
-          msg.string_l_force = packet.string_L_force;
-          msg.string_r_force = packet.string_R_force;
-          serial_logger_pub_->publish(msg);
+                    std_msgs::msg::UInt8 target_msg;
+                    target_msg.data = packet.target_id_;
+                    target_id_pub_->publish(target_msg);
 
-          RCLCPP_DEBUG(get_logger(),
-                       "Parsed logger packet: state=%u, prepare=%u, "
-                       "station=%u, finished=%u, "
-                       "fired=%u, shot=%u, dart=%u, door=%u, last_light=%u, "
-                       "vision_light=%u, "
-                       "vision_stable=%u, door_session=%u, autoaim_allow=%u, "
-                       "door_close_inhibit=%u, "
-                       "force_l=%.3f, force_r=%.3f",
-                       packet.state, packet.prepare_state,
-                       packet.launch_station_status, packet.is_fire_finished,
-                       packet.fired_count_this_open, packet.current_shot_number,
-                       packet.current_dart_id, packet.door_status,
-                       packet.last_light_detected, packet.vision_light_detected,
-                       packet.vision_stable_state, packet.door_session_active,
-                       packet.autoaim_allow, packet.door_close_inhibit_active,
-                       packet.string_L_force, packet.string_R_force);
+                    std_msgs::msg::Float32 offset_msg;
+                    offset_msg.data = packet.offset;
+                    offset_pub_->publish(offset_msg);
+
+                    RCLCPP_DEBUG(
+                        get_logger(), "Parsed packet: target_id=%u, dart_id=%u, offset=%.3f",
+                        packet.target_id_, packet.dart_id, packet.offset);
+                    continue;
+                }
+
+                LoggerPacket packet;
+                std::memcpy(&packet, raw.data(), sizeof(packet));
+
+                auto_aim_interfaces::msg::SerialLogger msg;
+                msg.header.stamp = now();
+                msg.header.frame_id = "serial";
+                msg.state = packet.state;
+                msg.prepare_state = packet.prepare_state;
+                msg.launch_station_status = packet.launch_station_status;
+                msg.is_fire_finished = packet.is_fire_finished != 0;
+                msg.fired_count_this_open = packet.fired_count_this_open;
+                msg.current_shot_number = packet.current_shot_number;
+                msg.current_dart_id = packet.current_dart_id;
+                msg.door_status = packet.door_status;
+                msg.last_light_detected = packet.last_light_detected;
+                msg.vision_light_detected = packet.vision_light_detected;
+                msg.vision_stable_state = packet.vision_stable_state;
+                msg.door_session_active = packet.door_session_active != 0;
+                msg.autoaim_allow = packet.autoaim_allow != 0;
+                msg.door_close_inhibit_active = packet.door_close_inhibit_active != 0;
+                msg.string_l_force = packet.string_L_force;
+                msg.string_r_force = packet.string_R_force;
+                serial_logger_pub_->publish(msg);
+
+                RCLCPP_DEBUG(
+                    get_logger(),
+                    "Parsed logger packet: state=%u, prepare=%u, "
+                    "station=%u, finished=%u, "
+                    "fired=%u, shot=%u, dart=%u, door=%u, last_light=%u, "
+                    "vision_light=%u, "
+                    "vision_stable=%u, door_session=%u, autoaim_allow=%u, "
+                    "door_close_inhibit=%u, "
+                    "force_l=%.3f, force_r=%.3f",
+                    packet.state, packet.prepare_state, packet.launch_station_status,
+                    packet.is_fire_finished, packet.fired_count_this_open,
+                    packet.current_shot_number, packet.current_dart_id, packet.door_status,
+                    packet.last_light_detected, packet.vision_light_detected,
+                    packet.vision_stable_state, packet.door_session_active, packet.autoaim_allow,
+                    packet.door_close_inhibit_active, packet.string_L_force, packet.string_R_force);
+            }
+        } catch (const std::exception & e) {
+            RCLCPP_ERROR(get_logger(), "Serial read error: %s", e.what());
+            parser = PacketParser{};
+            reopenPort();
         }
-      } catch (const std::exception &e) {
-        RCLCPP_ERROR(get_logger(), "Serial read error: %s", e.what());
-        parser = PacketParser{};
-        reopenPort();
-      }
     }
-  }
+}
 
-  void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Send::SharedPtr msg)
-  {
-    RCLCPP_INFO(get_logger(),
-                "[SerialDriver] 收到 Send 消息:distance=%.2f, pixel_angle=%.2f, real_angle=%.2f, long=%.2f, lat=%.2f, light_detected=%u",
-                msg->distance, msg->pixel_angle, msg->angle,
-                msg->longitudinal_distance, msg->lateral_distance,
-                msg->light_detected);
+void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Send::SharedPtr msg)
+{
+    RCLCPP_INFO(
+        get_logger(),
+        "[SerialDriver] 收到 Send 消息:distance=%.2f, pixel_angle=%.2f, real_angle=%.2f, "
+        "long=%.2f, lat=%.2f, light_detected=%u",
+        msg->distance, msg->pixel_angle, msg->angle, msg->longitudinal_distance,
+        msg->lateral_distance, msg->light_detected);
 
     const static std::map<std::string, uint8_t> id_unit8_map{
-        {"", 0}, {"outpost", 0}, {"1", 1}, {"1", 1}, {"2", 2}, {"3", 3}, {"4", 4}, {"5", 5}, {"guard", 6}, {"base", 7}};
+        {"", 0},  {"outpost", 0}, {"1", 1}, {"1", 1},     {"2", 2},
+        {"3", 3}, {"4", 4},       {"5", 5}, {"guard", 6}, {"base", 7}};
 
-    try
-    {
-      SendPacket packet;
-      packet.distance = msg->distance;
-      // 电控当前需要视觉像素角；雷达融合角仅用于日志调试。
-      packet.angle = msg->pixel_angle;
-      packet.longitudinal_distance = msg->longitudinal_distance;
-      packet.lateral_distance = msg->lateral_distance;
-      packet.dart_id_change_flag = 1;
-      // 调试模式下强制发送稳定标志，默认关闭时保持正常透传。
-      packet.stability = force_stability_ ? 1 : msg->stability;
-      packet.light_detected = msg->light_detected;
-      if (packet.light_detected != kLightVisible)
-      {
-        packet.distance = -1.0f;
-        packet.angle = kNoTargetAngle;
-        packet.longitudinal_distance = -1.0f;
-        packet.lateral_distance = -1.0f;
-      }
-
-      // 先计算 CRC
-      crc16::Append_CRC16_Check_Sum(reinterpret_cast<uint8_t *>(&packet), sizeof(packet));
-
-      // 转成字节向量
-      std::vector<uint8_t> data = toVector(packet);
-
-      // —— 在这里插入日志输出 —— //
-
-      // 1) 打印逻辑字段
-      RCLCPP_INFO(get_logger(),
-                  ">> Sending packet: distance=%.2f, sent_angle=%.2f, pixel_angle=%.2f, real_angle=%.2f, long=%.2f, lat=%.2f, dart_flag=%u, stability=%u, light_detected=%u",
-                  packet.distance,
-                  packet.angle,
-                  msg->pixel_angle,
-                  msg->angle,
-                  packet.longitudinal_distance,
-                  packet.lateral_distance,
-                  packet.dart_id_change_flag,
-                  packet.stability,
-                  packet.light_detected);
-
-      // 2) 打印原始字节（十六进制）
-      {
-        std::ostringstream ss;
-        ss << std::hex << std::setfill('0');
-        for (auto byte : data)
-        {
-          ss << std::setw(2) << static_cast<int>(byte) << " ";
+    try {
+        SendPacket packet;
+        packet.distance = msg->distance;
+        // 电控当前需要视觉像素角；雷达融合角仅用于日志调试。
+        packet.angle = msg->pixel_angle;
+        packet.longitudinal_distance = msg->longitudinal_distance;
+        packet.lateral_distance = msg->lateral_distance;
+        packet.dart_id_change_flag = 1;
+        // 调试模式下强制发送稳定标志，默认关闭时保持正常透传。
+        packet.stability = force_stability_ ? 1 : msg->stability;
+        packet.light_detected = msg->light_detected;
+        if (packet.light_detected != kLightVisible) {
+            packet.distance = -1.0f;
+            packet.angle = kNoTargetAngle;
+            packet.longitudinal_distance = -1.0f;
+            packet.lateral_distance = -1.0f;
         }
-        RCLCPP_DEBUG(get_logger(), ">> Raw bytes: %s", ss.str().c_str());
-      }
 
-      // 真正发送
-      serial_driver_->port()->send(data);
+        // 先计算 CRC
+        crc16::Append_CRC16_Check_Sum(reinterpret_cast<uint8_t *>(&packet), sizeof(packet));
 
-      // 计算并发布延迟
-      std_msgs::msg::Float64 latency;
-      latency.data = (this->now() - msg->header.stamp).seconds() * 1000.0;
-      RCLCPP_INFO_STREAM(get_logger(),
-                         "Total latency: " << latency.data << " ms");
-      latency_pub_->publish(latency);
+        // 转成字节向量
+        std::vector<uint8_t> data = toVector(packet);
+
+        // —— 在这里插入日志输出 —— //
+
+        // 1) 打印逻辑字段
+        RCLCPP_INFO(
+            get_logger(),
+            ">> Sending packet: distance=%.2f, sent_angle=%.2f, pixel_angle=%.2f, real_angle=%.2f, "
+            "long=%.2f, lat=%.2f, dart_flag=%u, stability=%u, light_detected=%u",
+            packet.distance, packet.angle, msg->pixel_angle, msg->angle,
+            packet.longitudinal_distance, packet.lateral_distance, packet.dart_id_change_flag,
+            packet.stability, packet.light_detected);
+
+        // 2) 打印原始字节（十六进制）
+        {
+            std::ostringstream ss;
+            ss << std::hex << std::setfill('0');
+            for (auto byte : data) {
+                ss << std::setw(2) << static_cast<int>(byte) << " ";
+            }
+            RCLCPP_DEBUG(get_logger(), ">> Raw bytes: %s", ss.str().c_str());
+        }
+
+        // 真正发送
+        serial_driver_->port()->send(data);
+
+        // 计算并发布延迟
+        std_msgs::msg::Float64 latency;
+        latency.data = (this->now() - msg->header.stamp).seconds() * 1000.0;
+        RCLCPP_INFO_STREAM(get_logger(), "Total latency: " << latency.data << " ms");
+        latency_pub_->publish(latency);
+    } catch (const std::exception & ex) {
+        RCLCPP_ERROR(get_logger(), "Error while sending data: %s", ex.what());
+        reopenPort();
     }
-    catch (const std::exception &ex)
-    {
-      RCLCPP_ERROR(get_logger(),
-                   "Error while sending data: %s", ex.what());
-      reopenPort();
-    }
-  }
+}
 
-  void RMSerialDriver::getParams()
-  {
+void RMSerialDriver::getParams()
+{
     using FlowControl = drivers::serial_driver::FlowControl;
     using Parity = drivers::serial_driver::Parity;
     using StopBits = drivers::serial_driver::StopBits;
@@ -331,177 +309,133 @@ namespace rm_serial_driver
     auto pt = Parity::NONE;
     auto sb = StopBits::ONE;
 
-    try
-    {
-      device_name_ = declare_parameter<std::string>("device_name", "");
-      force_stability_ = declare_parameter<bool>("force_stability", false);
-    }
-    catch (rclcpp::ParameterTypeException &ex)
-    {
-      RCLCPP_ERROR(get_logger(), "The device name or force_stability provided was invalid");
-      throw ex;
+    try {
+        device_name_ = declare_parameter<std::string>("device_name", "");
+        force_stability_ = declare_parameter<bool>("force_stability", false);
+    } catch (rclcpp::ParameterTypeException & ex) {
+        RCLCPP_ERROR(get_logger(), "The device name or force_stability provided was invalid");
+        throw ex;
     }
 
-    try
-    {
-      baud_rate = declare_parameter<int>("baud_rate", 0);
-    }
-    catch (rclcpp::ParameterTypeException &ex)
-    {
-      RCLCPP_ERROR(get_logger(), "The baud_rate provided was invalid");
-      throw ex;
+    try {
+        baud_rate = declare_parameter<int>("baud_rate", 0);
+    } catch (rclcpp::ParameterTypeException & ex) {
+        RCLCPP_ERROR(get_logger(), "The baud_rate provided was invalid");
+        throw ex;
     }
 
-    try
-    {
-      const auto fc_string = declare_parameter<std::string>("flow_control", "");
+    try {
+        const auto fc_string = declare_parameter<std::string>("flow_control", "");
 
-      if (fc_string == "none")
-      {
-        fc = FlowControl::NONE;
-      }
-      else if (fc_string == "hardware")
-      {
-        fc = FlowControl::HARDWARE;
-      }
-      else if (fc_string == "software")
-      {
-        fc = FlowControl::SOFTWARE;
-      }
-      else
-      {
-        throw std::invalid_argument{
-            "The flow_control parameter must be one of: none, software, or hardware."};
-      }
-    }
-    catch (rclcpp::ParameterTypeException &ex)
-    {
-      RCLCPP_ERROR(get_logger(), "The flow_control provided was invalid");
-      throw ex;
+        if (fc_string == "none") {
+            fc = FlowControl::NONE;
+        } else if (fc_string == "hardware") {
+            fc = FlowControl::HARDWARE;
+        } else if (fc_string == "software") {
+            fc = FlowControl::SOFTWARE;
+        } else {
+            throw std::invalid_argument{
+                "The flow_control parameter must be one of: none, software, or hardware."};
+        }
+    } catch (rclcpp::ParameterTypeException & ex) {
+        RCLCPP_ERROR(get_logger(), "The flow_control provided was invalid");
+        throw ex;
     }
 
-    try
-    {
-      const auto pt_string = declare_parameter<std::string>("parity", "");
+    try {
+        const auto pt_string = declare_parameter<std::string>("parity", "");
 
-      if (pt_string == "none")
-      {
-        pt = Parity::NONE;
-      }
-      else if (pt_string == "odd")
-      {
-        pt = Parity::ODD;
-      }
-      else if (pt_string == "even")
-      {
-        pt = Parity::EVEN;
-      }
-      else
-      {
-        throw std::invalid_argument{"The parity parameter must be one of: none, odd, or even."};
-      }
-    }
-    catch (rclcpp::ParameterTypeException &ex)
-    {
-      RCLCPP_ERROR(get_logger(), "The parity provided was invalid");
-      throw ex;
+        if (pt_string == "none") {
+            pt = Parity::NONE;
+        } else if (pt_string == "odd") {
+            pt = Parity::ODD;
+        } else if (pt_string == "even") {
+            pt = Parity::EVEN;
+        } else {
+            throw std::invalid_argument{"The parity parameter must be one of: none, odd, or even."};
+        }
+    } catch (rclcpp::ParameterTypeException & ex) {
+        RCLCPP_ERROR(get_logger(), "The parity provided was invalid");
+        throw ex;
     }
 
-    try
-    {
-      const auto sb_string = declare_parameter<std::string>("stop_bits", "");
+    try {
+        const auto sb_string = declare_parameter<std::string>("stop_bits", "");
 
-      if (sb_string == "1" || sb_string == "1.0")
-      {
-        sb = StopBits::ONE;
-      }
-      else if (sb_string == "1.5")
-      {
-        sb = StopBits::ONE_POINT_FIVE;
-      }
-      else if (sb_string == "2" || sb_string == "2.0")
-      {
-        sb = StopBits::TWO;
-      }
-      else
-      {
-        throw std::invalid_argument{"The stop_bits parameter must be one of: 1, 1.5, or 2."};
-      }
-    }
-    catch (rclcpp::ParameterTypeException &ex)
-    {
-      RCLCPP_ERROR(get_logger(), "The stop_bits provided was invalid");
-      throw ex;
+        if (sb_string == "1" || sb_string == "1.0") {
+            sb = StopBits::ONE;
+        } else if (sb_string == "1.5") {
+            sb = StopBits::ONE_POINT_FIVE;
+        } else if (sb_string == "2" || sb_string == "2.0") {
+            sb = StopBits::TWO;
+        } else {
+            throw std::invalid_argument{"The stop_bits parameter must be one of: 1, 1.5, or 2."};
+        }
+    } catch (rclcpp::ParameterTypeException & ex) {
+        RCLCPP_ERROR(get_logger(), "The stop_bits provided was invalid");
+        throw ex;
     }
 
     device_config_ =
         std::make_unique<drivers::serial_driver::SerialPortConfig>(baud_rate, fc, pt, sb);
-  }
+}
 
-  void RMSerialDriver::reopenPort()
-  {
+void RMSerialDriver::reopenPort()
+{
     RCLCPP_WARN(get_logger(), "Attempting to reopen port");
-    try
-    {
-      if (serial_driver_->port()->is_open())
-      {
-        serial_driver_->port()->close();
-      }
-      serial_driver_->port()->open();
-      RCLCPP_INFO(get_logger(), "Successfully reopened port");
-    }
-    catch (const std::exception &ex)
-    {
-      RCLCPP_ERROR(get_logger(), "Error while reopening port: %s", ex.what());
-      if (rclcpp::ok())
-      {
-        rclcpp::sleep_for(std::chrono::seconds(1));
-        reopenPort();
-      }
-    }
-  }
-
-  void RMSerialDriver::setParam(const rclcpp::Parameter &param)
-  {
-    if (!detector_param_client_->service_is_ready())
-    {
-      RCLCPP_WARN(get_logger(), "Service not ready, skipping parameter set");
-      return;
-    }
-
-    if (
-        !set_param_future_.valid() ||
-        set_param_future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-    {
-      RCLCPP_INFO(get_logger(), "Setting detect_color to %ld...", param.as_int());
-      set_param_future_ = detector_param_client_->set_parameters(
-          {param}, [this, param](const ResultFuturePtr &results)
-          {
-        for (const auto & result : results.get()) {
-          if (!result.successful) {
-            RCLCPP_ERROR(get_logger(), "Failed to set parameter: %s", result.reason.c_str());
-            return;
-          }
+    try {
+        if (serial_driver_->port()->is_open()) {
+            serial_driver_->port()->close();
         }
-        RCLCPP_INFO(get_logger(), "Successfully set detect_color to %ld!", param.as_int());
-        initial_set_param_ = true; });
+        serial_driver_->port()->open();
+        RCLCPP_INFO(get_logger(), "Successfully reopened port");
+    } catch (const std::exception & ex) {
+        RCLCPP_ERROR(get_logger(), "Error while reopening port: %s", ex.what());
+        if (rclcpp::ok()) {
+            rclcpp::sleep_for(std::chrono::seconds(1));
+            reopenPort();
+        }
     }
-  }
+}
 
-  void RMSerialDriver::resetTracker()
-  {
-    if (!reset_tracker_client_->service_is_ready())
-    {
-      RCLCPP_WARN(get_logger(), "Service not ready, skipping tracker reset");
-      return;
+void RMSerialDriver::setParam(const rclcpp::Parameter & param)
+{
+    if (!detector_param_client_->service_is_ready()) {
+        RCLCPP_WARN(get_logger(), "Service not ready, skipping parameter set");
+        return;
+    }
+
+    if (!set_param_future_.valid() ||
+        set_param_future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+        RCLCPP_INFO(get_logger(), "Setting detect_color to %ld...", param.as_int());
+        set_param_future_ = detector_param_client_->set_parameters(
+            {param}, [this, param](const ResultFuturePtr & results) {
+                for (const auto & result : results.get()) {
+                    if (!result.successful) {
+                        RCLCPP_ERROR(
+                            get_logger(), "Failed to set parameter: %s", result.reason.c_str());
+                        return;
+                    }
+                }
+                RCLCPP_INFO(get_logger(), "Successfully set detect_color to %ld!", param.as_int());
+                initial_set_param_ = true;
+            });
+    }
+}
+
+void RMSerialDriver::resetTracker()
+{
+    if (!reset_tracker_client_->service_is_ready()) {
+        RCLCPP_WARN(get_logger(), "Service not ready, skipping tracker reset");
+        return;
     }
 
     auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
     reset_tracker_client_->async_send_request(request);
     RCLCPP_INFO(get_logger(), "Reset tracker!");
-  }
+}
 
-} // namespace rm_serial_driver
+}  // namespace rm_serial_driver
 
 #include "rclcpp_components/register_node_macro.hpp"
 

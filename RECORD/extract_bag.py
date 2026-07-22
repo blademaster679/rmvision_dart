@@ -11,10 +11,10 @@ import numpy as np
 import yaml
 
 try:
-    from rclpy.serialization import deserialize_message
-    from rosidl_runtime_py.utilities import get_message
     import rosbag2_py
     import sensor_msgs_py.point_cloud2 as point_cloud2
+    from rclpy.serialization import deserialize_message
+    from rosidl_runtime_py.utilities import get_message
 except ImportError:
     print("Error: failed to import ROS 2 libraries. Source ROS 2 and this workspace first.")
     sys.exit(1)
@@ -173,12 +173,15 @@ def rpy_to_quaternion(rpy):
     sp = np.sin(pitch * 0.5)
     cr = np.cos(roll * 0.5)
     sr = np.sin(roll * 0.5)
-    return np.array([
-        sr * cp * cy - cr * sp * sy,
-        cr * sp * cy + sr * cp * sy,
-        cr * cp * sy - sr * sp * cy,
-        cr * cp * cy + sr * sp * sy,
-    ], dtype=np.float64)
+    return np.array(
+        [
+            sr * cp * cy - cr * sp * sy,
+            cr * sp * cy + sr * cp * sy,
+            cr * cp * sy - sr * sp * cy,
+            cr * cp * cy + sr * sp * sy,
+        ],
+        dtype=np.float64,
+    )
 
 
 def quaternion_to_matrix(q):
@@ -196,11 +199,14 @@ def quaternion_to_matrix(q):
     wx = w * x * scale
     wy = w * y * scale
     wz = w * z * scale
-    return np.array([
-        [1.0 - yy - zz, xy - wz, xz + wy],
-        [xy + wz, 1.0 - xx - zz, yz - wx],
-        [xz - wy, yz + wx, 1.0 - xx - yy],
-    ], dtype=np.float64)
+    return np.array(
+        [
+            [1.0 - yy - zz, xy - wz, xz + wy],
+            [xy + wz, 1.0 - xx - zz, yz - wx],
+            [xz - wy, yz + wx, 1.0 - xx - yy],
+        ],
+        dtype=np.float64,
+    )
 
 
 def transform_matrix(transform):
@@ -221,7 +227,9 @@ def load_yaml(path):
 
 
 def camera_to_livox_transform(camera_config, active_lens_config):
-    return transform_matrix(camera_config.get("camera_to_livox", active_lens_config["camera_to_livox"]))
+    return transform_matrix(
+        camera_config.get("camera_to_livox", active_lens_config["camera_to_livox"])
+    )
 
 
 def load_projection_configs():
@@ -238,10 +246,12 @@ def load_projection_configs():
     outpost_to_livox = camera_to_livox_transform(outpost_camera, active_lens_config)
     gimbal_to_livox = gimbal_to_base @ base_to_livox
     gimbal_to_outpost = gimbal_to_livox @ np.linalg.inv(outpost_to_livox)
-    link_to_optical = transform_matrix({
-        "xyz": "0 0 0",
-        "rpy": "-1.5707963267948966 0 -1.5707963267948966",
-    })
+    link_to_optical = transform_matrix(
+        {
+            "xyz": "0 0 0",
+            "rpy": "-1.5707963267948966 0 -1.5707963267948966",
+        }
+    )
 
     role_transforms = {
         "base": np.linalg.inv(odom_to_gimbal @ gimbal_to_base @ link_to_optical),
@@ -256,21 +266,23 @@ def load_projection_configs():
         configs[role] = {
             "odom_to_optical_inv": role_transforms[role],
             "camera_matrix": np.array(
-                camera_info["camera_matrix"]["data"], dtype=np.float64).reshape(3, 3),
+                camera_info["camera_matrix"]["data"], dtype=np.float64
+            ).reshape(3, 3),
         }
     return configs
 
 
 def cloud_to_xyz_array(cloud_msg):
-    points = point_cloud2.read_points(
-        cloud_msg, field_names=("x", "y", "z"), skip_nans=True)
+    points = point_cloud2.read_points(cloud_msg, field_names=("x", "y", "z"), skip_nans=True)
     if isinstance(points, np.ndarray):
         if points.dtype.names:
-            return np.column_stack((
-                points["x"].astype(np.float64),
-                points["y"].astype(np.float64),
-                points["z"].astype(np.float64),
-            ))
+            return np.column_stack(
+                (
+                    points["x"].astype(np.float64),
+                    points["y"].astype(np.float64),
+                    points["z"].astype(np.float64),
+                )
+            )
         return points.astype(np.float64).reshape(-1, 3)
     return np.array(list(points), dtype=np.float64).reshape(-1, 3)
 
@@ -354,19 +366,12 @@ def is_no_target(send_msg):
     if light_detected == 0:
         return True
 
-    current_no_target = (
-        abs(float(send_msg.distance) + 1.0) < 1e-3
-        and (
-            abs(float(send_msg.angle) - 0.06) < 1e-3
-            or abs(float(send_msg.pixel_angle) - 0.06) < 1e-3
-        )
+    current_no_target = abs(float(send_msg.distance) + 1.0) < 1e-3 and (
+        abs(float(send_msg.angle) - 0.06) < 1e-3 or abs(float(send_msg.pixel_angle) - 0.06) < 1e-3
     )
-    legacy_no_target = (
-        abs(float(send_msg.distance) - 666.0) < 1e-3
-        and (
-            abs(float(send_msg.angle) - 1234.0) < 1e-3
-            or abs(float(send_msg.pixel_angle) - 1234.0) < 1e-3
-        )
+    legacy_no_target = abs(float(send_msg.distance) - 666.0) < 1e-3 and (
+        abs(float(send_msg.angle) - 1234.0) < 1e-3
+        or abs(float(send_msg.pixel_angle) - 1234.0) < 1e-3
     )
     return current_no_target or legacy_no_target
 
@@ -423,9 +428,7 @@ def align_cloud_buffer_to_images(cloud_buffer, first_image_timestamp):
 
     first_cloud_timestamp = cloud_buffer[0][0]
     time_gap_ns = abs(int(first_image_timestamp) - int(first_cloud_timestamp))
-    use_relative = mode == "relative" or (
-        mode == "auto" and time_gap_ns > 10_000_000_000
-    )
+    use_relative = mode == "relative" or (mode == "auto" and time_gap_ns > 10_000_000_000)
 
     if not use_relative:
         return index_time_buffer(cloud_buffer), "bag"
@@ -518,8 +521,7 @@ def write_rosout(log_file, msg):
     levels = {10: "DEBUG", 20: "INFO", 30: "WARN", 40: "ERROR", 50: "FATAL"}
     level_str = levels.get(msg.level, "UNKNOWN")
     log_file.write(
-        f"[{msg.stamp.sec}.{msg.stamp.nanosec:09d}] "
-        f"[{level_str}] [{msg.name}]: {msg.msg}\n"
+        f"[{msg.stamp.sec}.{msg.stamp.nanosec:09d}] " f"[{level_str}] [{msg.name}]: {msg.msg}\n"
     )
 
 
@@ -623,7 +625,10 @@ def seek_reader(reader, timestamp_ns):
     try:
         reader.seek(int(timestamp_ns))
     except AttributeError:
-        print("Warning: this rosbag2 reader does not support seek; scanning from bag start.", flush=True)
+        print(
+            "Warning: this rosbag2 reader does not support seek; scanning from bag start.",
+            flush=True,
+        )
     except RuntimeError as exc:
         print(f"Warning: failed to seek reader to {timestamp_ns}: {exc}", flush=True)
 
@@ -700,17 +705,10 @@ def process_bag(bag_path):
     print("Pass 1: reading metadata and buffering Send messages if needed...", flush=True)
 
     reader_pass1, type_map = build_reader_with_reindex(bag_path)
-    should_buffer_clouds = (
-        write_cloud_video
-        and type_map.get(CLOUD_TOPIC) == POINT_CLOUD_TYPE
-    )
+    should_buffer_clouds = write_cloud_video and type_map.get(CLOUD_TOPIC) == POINT_CLOUD_TYPE
     cloud_buffer = []
     first_image_timestamp = None
-    send_buffers = {
-        topic: []
-        for topic, topic_type in type_map.items()
-        if topic_type == SEND_TYPE
-    }
+    send_buffers = {topic: [] for topic, topic_type in type_map.items() if topic_type == SEND_TYPE}
     if not write_annotated_video:
         send_buffers = {}
 
@@ -722,16 +720,10 @@ def process_bag(bag_path):
             print(f"Warning: cannot load message type {topic_type} for {topic}")
 
     image_topics_in_bag = {
-        topic
-        for topics in IMAGE_TOPICS.values()
-        for topic in topics
-        if topic in type_map
+        topic for topics in IMAGE_TOPICS.values() for topic in topics if topic in type_map
     }
     result_image_topics_in_bag = {
-        topic
-        for topics in RESULT_IMAGE_TOPICS.values()
-        for topic in topics
-        if topic in type_map
+        topic for topics in RESULT_IMAGE_TOPICS.values() for topic in topics if topic in type_map
     }
     pass2_totals = {
         "images": 0,
@@ -744,10 +736,12 @@ def process_bag(bag_path):
     if topic_message_counts and not range_enabled:
         if process_image_messages:
             pass2_totals["images"] = sum(
-                topic_message_counts.get(topic, 0) for topic in image_topics_in_bag)
+                topic_message_counts.get(topic, 0) for topic in image_topics_in_bag
+            )
         if write_result_video:
             pass2_totals["result_images"] = sum(
-                topic_message_counts.get(topic, 0) for topic in result_image_topics_in_bag)
+                topic_message_counts.get(topic, 0) for topic in result_image_topics_in_bag
+            )
         if write_cloud_video:
             pass2_totals["clouds"] = topic_message_counts.get(CLOUD_TOPIC, 0)
         if write_rosout_log:
@@ -799,11 +793,11 @@ def process_bag(bag_path):
     cloud_buffer.sort(key=lambda item: item[0])
 
     indexed_send_buffers = {
-        topic: index_time_buffer(buffer)
-        for topic, buffer in send_buffers.items()
+        topic: index_time_buffer(buffer) for topic, buffer in send_buffers.items()
     }
     indexed_cloud_buffer, cloud_time_mode = align_cloud_buffer_to_images(
-        cloud_buffer, first_image_timestamp)
+        cloud_buffer, first_image_timestamp
+    )
 
     if send_buffers:
         for topic, buffer in send_buffers.items():
@@ -833,10 +827,11 @@ def process_bag(bag_path):
         flush=True,
     )
 
-    send_topic_for_role = {
-        role: choose_send_topic(role, type_map)
-        for role in IMAGE_TOPICS
-    } if write_annotated_video else {}
+    send_topic_for_role = (
+        {role: choose_send_topic(role, type_map) for role in IMAGE_TOPICS}
+        if write_annotated_video
+        else {}
+    )
     for role, send_topic in send_topic_for_role.items():
         print(f"  {role} overlay source: {send_topic or 'no Send topic'}", flush=True)
 
@@ -951,15 +946,19 @@ def process_bag(bag_path):
                         if write_raw_video:
                             raw_path = os.path.join(out_dir, f"video_{role}_raw.mp4")
                             raw_video_writers[role] = cv2.VideoWriter(
-                                raw_path, fourcc, extract_fps, (width, height))
+                                raw_path, fourcc, extract_fps, (width, height)
+                            )
                             if not raw_video_writers[role].isOpened():
                                 raise RuntimeError(f"failed to open raw video writer for {role}")
                         if write_annotated_video:
                             annotated_path = os.path.join(out_dir, f"video_{role}_annotated.mp4")
                             annotated_video_writers[role] = cv2.VideoWriter(
-                                annotated_path, fourcc, extract_fps, (width, height))
+                                annotated_path, fourcc, extract_fps, (width, height)
+                            )
                             if not annotated_video_writers[role].isOpened():
-                                raise RuntimeError(f"failed to open annotated video writer for {role}")
+                                raise RuntimeError(
+                                    f"failed to open annotated video writer for {role}"
+                                )
 
                     if (
                         projection_configs
@@ -970,7 +969,8 @@ def process_bag(bag_path):
                             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
                             cloud_path = os.path.join(out_dir, f"video_{role}_cloud.mp4")
                             cloud_video_writers[role] = cv2.VideoWriter(
-                                cloud_path, fourcc, extract_fps, (width, height))
+                                cloud_path, fourcc, extract_fps, (width, height)
+                            )
                             if not cloud_video_writers[role].isOpened():
                                 raise RuntimeError(f"failed to open cloud video writer for {role}")
 
@@ -983,10 +983,12 @@ def process_bag(bag_path):
                             cloud_msg = latest_cloud_msg
 
                         cached_key, cached_projection = projected_cloud_cache.get(
-                            role, (None, None))
+                            role, (None, None)
+                        )
                         if cached_key != cloud_key:
                             cached_projection = project_cloud_points(
-                                cloud_msg, role, projection_configs, extract_cloud_max_points)
+                                cloud_msg, role, projection_configs, extract_cloud_max_points
+                            )
                             projected_cloud_cache[role] = (cloud_key, cached_projection)
                         cloud_overlay = draw_cloud_overlay(image, cached_projection)
                         cloud_video_writers[role].write(cloud_overlay)
@@ -997,7 +999,9 @@ def process_bag(bag_path):
                         raw_video_writers[role].write(image)
                     if write_annotated_video:
                         send_msg = latest_before(indexed_send_buffers.get(send_topic), timestamp)
-                        annotated = draw_send_overlay(image, send_msg, role, send_topic or "no Send topic")
+                        annotated = draw_send_overlay(
+                            image, send_msg, role, send_topic or "no Send topic"
+                        )
                         annotated_video_writers[role].write(annotated)
                     frame_counts[role] += 1
                     processed_frames += 1
@@ -1018,7 +1022,8 @@ def process_bag(bag_path):
                         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
                         result_path = os.path.join(out_dir, f"video_{role}_result.mp4")
                         result_video_writers[role] = cv2.VideoWriter(
-                            result_path, fourcc, extract_fps, (width, height))
+                            result_path, fourcc, extract_fps, (width, height)
+                        )
                         if not result_video_writers[role].isOpened():
                             raise RuntimeError(f"failed to open result video writer for {role}")
 
@@ -1083,6 +1088,8 @@ def process_bag(bag_path):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python3 extract_bag.py <path_to_bag_dir>")
-        print("Example: python3 extract_bag.py /home/pnx/rosbag/rmvision_dart/rmvision_dart_20260515_182905")
+        print(
+            "Example: python3 extract_bag.py /home/pnx/rosbag/rmvision_dart/rmvision_dart_20260515_182905"
+        )
         sys.exit(1)
     process_bag(sys.argv[1])
