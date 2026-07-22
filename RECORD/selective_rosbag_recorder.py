@@ -4,14 +4,13 @@ import os
 from typing import Callable
 
 import rclpy
-from rclpy.node import Node
-from rclpy.executors import ExternalShutdownException
-from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, ReliabilityPolicy
-from rclpy.serialization import serialize_message
 import rosbag2_py
-
 from auto_aim_interfaces.msg import Send, SerialLogger
 from rcl_interfaces.msg import Log
+from rclpy.executors import ExternalShutdownException
+from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, ReliabilityPolicy
+from rclpy.serialization import serialize_message
 from sensor_msgs.msg import CompressedImage, PointCloud2
 from std_msgs.msg import Float32, UInt8
 
@@ -194,13 +193,9 @@ class SelectiveRosbagRecorder(Node):
 
     def report_counts(self):
         nonzero = {topic: count for topic, count in self.counts.items() if count}
-        image_counts = {
-            role: nonzero.get(topic, 0)
-            for role, topic in IMAGE_TOPIC_BY_ROLE.items()
-        }
+        image_counts = {role: nonzero.get(topic, 0) for role, topic in IMAGE_TOPIC_BY_ROLE.items()}
         detector_counts = {
-            role: nonzero.get(topic, 0)
-            for role, topic in DETECTOR_RESULT_TOPIC_BY_ROLE.items()
+            role: nonzero.get(topic, 0) for role, topic in DETECTOR_RESULT_TOPIC_BY_ROLE.items()
         }
         self.get_logger().info(
             f"recorded images base={image_counts['base']} "

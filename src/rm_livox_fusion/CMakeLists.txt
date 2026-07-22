@@ -26,11 +26,10 @@ find_package(Eigen3 REQUIRED)
 
 add_definitions(${PCL_DEFINITIONS})
 
-add_executable(cloud_accumulator_node
-  src/rm_livox_fusion_node.cpp
-)
+add_executable(cloud_accumulator_node src/rm_livox_fusion_node.cpp)
 
-ament_target_dependencies(cloud_accumulator_node
+ament_target_dependencies(
+  cloud_accumulator_node
   rclcpp
   sensor_msgs
   std_msgs
@@ -41,25 +40,19 @@ ament_target_dependencies(cloud_accumulator_node
   pcl_conversions
 )
 
-target_include_directories(cloud_accumulator_node PRIVATE
-  ${PROJECT_SOURCE_DIR}/include
-  ${PCL_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
+target_include_directories(
+  cloud_accumulator_node PRIVATE ${PROJECT_SOURCE_DIR}/include ${PCL_INCLUDE_DIRS}
+                                 ${EIGEN3_INCLUDE_DIRS}
 )
 
-target_link_libraries(cloud_accumulator_node
-  ${PCL_LIBRARIES}
-)
+target_link_libraries(cloud_accumulator_node ${PCL_LIBRARIES})
 
-install(TARGETS cloud_accumulator_node
-  DESTINATION lib/${PROJECT_NAME}
-)
+install(TARGETS cloud_accumulator_node DESTINATION lib/${PROJECT_NAME})
 
-add_executable(range_fusion_node
-  src/range_fusion_node.cpp
-)
+add_executable(range_fusion_node src/range_fusion_node.cpp)
 
-ament_target_dependencies(range_fusion_node
+ament_target_dependencies(
+  range_fusion_node
   rclcpp
   sensor_msgs
   std_msgs
@@ -71,36 +64,21 @@ ament_target_dependencies(range_fusion_node
   pcl_conversions
 )
 
-target_include_directories(range_fusion_node PRIVATE
-  ${PROJECT_SOURCE_DIR}/include
-  ${PCL_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
+target_include_directories(
+  range_fusion_node PRIVATE ${PROJECT_SOURCE_DIR}/include ${PCL_INCLUDE_DIRS}
+                            ${EIGEN3_INCLUDE_DIRS}
 )
 
-target_link_libraries(range_fusion_node
-  ${PCL_LIBRARIES}
-)
+target_link_libraries(range_fusion_node ${PCL_LIBRARIES})
 
-install(TARGETS range_fusion_node
-  DESTINATION lib/${PROJECT_NAME}
-)
+install(TARGETS range_fusion_node DESTINATION lib/${PROJECT_NAME})
 
-add_executable(send_mux_node
-  src/send_mux_node.cpp
-)
+add_executable(send_mux_node src/send_mux_node.cpp)
 
-ament_target_dependencies(send_mux_node
-  rclcpp
-  std_msgs
-  auto_aim_interfaces
-)
+ament_target_dependencies(send_mux_node rclcpp std_msgs auto_aim_interfaces)
 
-install(TARGETS send_mux_node
-  DESTINATION lib/${PROJECT_NAME}
-)
+install(TARGETS send_mux_node DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY include/
-  DESTINATION include
-)
+install(DIRECTORY include/ DESTINATION include)
 
 ament_package()

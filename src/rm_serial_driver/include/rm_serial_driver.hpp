@@ -11,8 +11,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/subscription.hpp>
 #include <serial_driver/serial_driver.hpp>
-#include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/u_int8.hpp>
 #include <std_srvs/srv/trigger.hpp>
@@ -31,14 +31,14 @@
 
 namespace rm_serial_driver
 {
-  class RMSerialDriver : public rclcpp::Node
-  {
-  public:
-    explicit RMSerialDriver(const rclcpp::NodeOptions &options);
+class RMSerialDriver : public rclcpp::Node
+{
+public:
+    explicit RMSerialDriver(const rclcpp::NodeOptions & options);
 
     ~RMSerialDriver() override;
 
-  private:
+private:
     void getParams();
 
     void receiveData();
@@ -47,7 +47,7 @@ namespace rm_serial_driver
 
     void reopenPort();
 
-    void setParam(const rclcpp::Parameter &param);
+    void setParam(const rclcpp::Parameter & param);
 
     void resetTracker();
 
@@ -58,7 +58,8 @@ namespace rm_serial_driver
     std::unique_ptr<drivers::serial_driver::SerialDriver> serial_driver_;
 
     // Param client to set detect_colr
-    using ResultFuturePtr = std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
+    using ResultFuturePtr =
+        std::shared_future<std::vector<rcl_interfaces::msg::SetParametersResult>>;
     bool initial_set_param_ = false;
     uint8_t previous_receive_color_ = 0;
     rclcpp::AsyncParametersClient::SharedPtr detector_param_client_;
@@ -81,7 +82,7 @@ namespace rm_serial_driver
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
 
     // dart_id
-    rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr dart_pub_; // 新增
+    rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr dart_pub_;  // 新增
 
     // --- 新增：目标ID发布 ---
     rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr target_id_pub_;
@@ -98,9 +99,9 @@ namespace rm_serial_driver
 
     std::thread receive_thread_;
 
-    double light_radius_ = 130; // 用于Rivz，需要直接给出数值可视化
+    double light_radius_ = 130;  // 用于Rivz，需要直接给出数值可视化
     bool force_stability_ = false;
-  };
-} // namespace rm_serial_driver
+};
+}  // namespace rm_serial_driver
 
-#endif // RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_
+#endif  // RM_SERIAL_DRIVER__RM_SERIAL_DRIVER_HPP_

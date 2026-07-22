@@ -13,8 +13,8 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(asio_cmake_module REQUIRED)
 
-
-rosidl_generate_interfaces(${PROJECT_NAME}
+rosidl_generate_interfaces(
+  ${PROJECT_NAME}
   "msg/Light.msg"
   "msg/Lights.msg"
   "msg/DebugLight.msg"
@@ -22,13 +22,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Send.msg"
   "msg/DartProfile.msg"
   "msg/SerialLogger.msg"
-  
-
   DEPENDENCIES
-    std_msgs
-    geometry_msgs
-    sensor_msgs
+  std_msgs
+  geometry_msgs
+  sensor_msgs
 )
-
 
 ament_package()

@@ -7,13 +7,14 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory('rm_serial_driver'), 'config', 'serial_driver.yaml')
+        get_package_share_directory("rm_serial_driver"), "config", "serial_driver.yaml"
+    )
 
     rm_serial_driver_node = Node(
-        package='rm_serial_driver',
-        executable='rm_serial_driver_node',
-        namespace='',
-        output='screen',
+        package="rm_serial_driver",
+        executable="rm_serial_driver_node",
+        namespace="",
+        output="screen",
         emulate_tty=True,
         parameters=[config],
     )

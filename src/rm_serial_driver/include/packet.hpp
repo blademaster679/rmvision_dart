@@ -13,37 +13,37 @@ namespace rm_serial_driver
 {
 struct ReceivePacket
 {
-  uint8_t header = 0x5A;
-  uint8_t target_id_;  // 0-outpost 1-base
-  uint8_t dart_id;
-  float offset;
-  uint16_t checksum = 0;
+    uint8_t header = 0x5A;
+    uint8_t target_id_;  // 0-outpost 1-base
+    uint8_t dart_id;
+    float offset;
+    uint16_t checksum = 0;
 } __attribute__((packed));
 
 struct LoggerPacket
 {
-  uint8_t header = 0xD5;
+    uint8_t header = 0xD5;
 
-  uint8_t state;
-  uint8_t prepare_state;
-  uint8_t launch_station_status;
-  uint8_t is_fire_finished;  // 0-false, 1-true
+    uint8_t state;
+    uint8_t prepare_state;
+    uint8_t launch_station_status;
+    uint8_t is_fire_finished;  // 0-false, 1-true
 
-  uint8_t fired_count_this_open;
-  uint8_t current_shot_number;
-  uint8_t current_dart_id;
-  uint8_t door_status;
-  uint8_t last_light_detected;
-  uint8_t vision_light_detected;
-  uint8_t vision_stable_state;
-  uint8_t door_session_active;        // 0-false, 1-true
-  uint8_t autoaim_allow;              // 0-false, 1-true
-  uint8_t door_close_inhibit_active;  // 0-false, 1-true
+    uint8_t fired_count_this_open;
+    uint8_t current_shot_number;
+    uint8_t current_dart_id;
+    uint8_t door_status;
+    uint8_t last_light_detected;
+    uint8_t vision_light_detected;
+    uint8_t vision_stable_state;
+    uint8_t door_session_active;        // 0-false, 1-true
+    uint8_t autoaim_allow;              // 0-false, 1-true
+    uint8_t door_close_inhibit_active;  // 0-false, 1-true
 
-  float string_L_force;
-  float string_R_force;
+    float string_L_force;
+    float string_R_force;
 
-  uint16_t checksum = 0;
+    uint16_t checksum = 0;
 } __attribute__((packed));
 
 static_assert(sizeof(ReceivePacket) == 9, "ReceivePacket protocol size mismatch");
@@ -54,65 +54,63 @@ static_assert(offsetof(ReceivePacket, checksum) == 7, "ReceivePacket checksum of
 
 static_assert(sizeof(LoggerPacket) == 25, "LoggerPacket protocol size mismatch");
 static_assert(
-  offsetof(LoggerPacket, door_close_inhibit_active) == 14,
-  "LoggerPacket door-close inhibit offset mismatch");
+    offsetof(LoggerPacket, door_close_inhibit_active) == 14,
+    "LoggerPacket door-close inhibit offset mismatch");
 static_assert(
-  offsetof(LoggerPacket, string_L_force) == 15, "LoggerPacket left force offset mismatch");
+    offsetof(LoggerPacket, string_L_force) == 15, "LoggerPacket left force offset mismatch");
 static_assert(
-  offsetof(LoggerPacket, string_R_force) == 19, "LoggerPacket right force offset mismatch");
+    offsetof(LoggerPacket, string_R_force) == 19, "LoggerPacket right force offset mismatch");
 static_assert(offsetof(LoggerPacket, checksum) == 23, "LoggerPacket checksum offset mismatch");
 
 struct SendPacket
 {
-  uint8_t header = 0xA5;
-  //   uint8_t tracking : 1;
-  //   uint8_t iffire : 1;
-  //   uint8_t id : 3;    0-outpost 6-guard 7-base
-  //   uint8_t reserved : 3;
+    uint8_t header = 0xA5;
+    //   uint8_t tracking : 1;
+    //   uint8_t iffire : 1;
+    //   uint8_t id : 3;    0-outpost 6-guard 7-base
+    //   uint8_t reserved : 3;
 
-  float distance;
-  float angle;
-  float longitudinal_distance;
-  float lateral_distance;
-  uint8_t dart_id_change_flag;
-  uint8_t stability;
-  // 0: unknown/no target, 1: green light visible and aim data valid,
-  // 2: door open but green light occluded, 3: door not fully open/blocked.
-  uint8_t light_detected;
+    float distance;
+    float angle;
+    float longitudinal_distance;
+    float lateral_distance;
+    uint8_t dart_id_change_flag;
+    uint8_t stability;
+    // 0: unknown/no target, 1: green light visible and aim data valid,
+    // 2: door open but green light occluded, 3: door not fully open/blocked.
+    uint8_t light_detected;
 
-  uint16_t checksum = 0;
+    uint16_t checksum = 0;
 } __attribute__((packed));
 
 static_assert(sizeof(SendPacket) == 22, "SendPacket protocol size mismatch");
 static_assert(offsetof(SendPacket, distance) == 1, "SendPacket distance offset mismatch");
 static_assert(offsetof(SendPacket, angle) == 5, "SendPacket angle offset mismatch");
 static_assert(
-  offsetof(SendPacket, longitudinal_distance) == 9,
-  "SendPacket longitudinal distance offset mismatch");
+    offsetof(SendPacket, longitudinal_distance) == 9,
+    "SendPacket longitudinal distance offset mismatch");
 static_assert(
-  offsetof(SendPacket, lateral_distance) == 13,
-  "SendPacket lateral distance offset mismatch");
+    offsetof(SendPacket, lateral_distance) == 13, "SendPacket lateral distance offset mismatch");
 static_assert(
-  offsetof(SendPacket, dart_id_change_flag) == 17,
-  "SendPacket dart flag offset mismatch");
+    offsetof(SendPacket, dart_id_change_flag) == 17, "SendPacket dart flag offset mismatch");
 static_assert(offsetof(SendPacket, stability) == 18, "SendPacket stability offset mismatch");
 static_assert(offsetof(SendPacket, light_detected) == 19, "SendPacket light offset mismatch");
 static_assert(offsetof(SendPacket, checksum) == 20, "SendPacket checksum offset mismatch");
 
 inline ReceivePacket fromVector(const std::vector<uint8_t> & data)
 {
-  ReceivePacket packet;
-  std::copy(data.begin(), data.end(), reinterpret_cast<uint8_t *>(&packet));
-  return packet;
+    ReceivePacket packet;
+    std::copy(data.begin(), data.end(), reinterpret_cast<uint8_t *>(&packet));
+    return packet;
 }
 
 inline std::vector<uint8_t> toVector(const SendPacket & data)
 {
-  std::vector<uint8_t> packet(sizeof(SendPacket));
-  std::copy(
-    reinterpret_cast<const uint8_t *>(&data),
-    reinterpret_cast<const uint8_t *>(&data) + sizeof(SendPacket), packet.begin());
-  return packet;
+    std::vector<uint8_t> packet(sizeof(SendPacket));
+    std::copy(
+        reinterpret_cast<const uint8_t *>(&data),
+        reinterpret_cast<const uint8_t *>(&data) + sizeof(SendPacket), packet.begin());
+    return packet;
 }
 
 }  // namespace rm_serial_driver
