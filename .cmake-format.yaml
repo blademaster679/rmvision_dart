@@ -1,0 +1,13 @@
+format:
+  line_width: 100
+  tab_size: 2
+  use_tabchars: false
+  dangle_parens: true
+  line_ending: unix
+
+markup:
+  enable_markup: true
+  first_comment_is_literal: false
+
+misc:
+  per_command: {}
