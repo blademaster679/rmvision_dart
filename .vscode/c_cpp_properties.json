@@ -1,20 +1,34 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "/opt/ros/humble/include/**",
-                "/opt/ros/humble/lib/**",
-                "/opt/ros/humble/lib/serial_driver",
-                "/usr/include/opencv4",
-                "/usr/include/eigen3"
-            ],
-            "defines": [],
-            "cStandard": "c17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-x64"
-        }
-    ],
-    "version": 4
+<<<<<<< HEAD
+=======
+  "configurations": [
+    {
+      "name": "Linux",
+      "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+      "compilerPath": "/usr/bin/g++",
+      "includePath": [
+        "${workspaceFolder}/src/**",
+        "${workspaceFolder}/install/**",
+        "/opt/ros/humble/include/**",
+        "/usr/include/opencv4",
+        "/usr/include/eigen3"
+      ],
+      "defines": [],
+      "cStandard": "c17",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "linux-gcc-x64",
+      "browse": {
+        "path": [
+          "${workspaceFolder}/src",
+          "${workspaceFolder}/install",
+          "/opt/ros/humble/include",
+          "/usr/include/opencv4",
+          "/usr/include/eigen3"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ],
+  "version": 4
 }
+>>>>>>> b9b175f (fixup:)

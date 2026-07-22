@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    // C/C++/CMake
+    "ms-vscode.cpptools",
+    "ms-vscode.cmake-tools",
+    "llvm-vs-code-extensions.vscode-clangd",
+    // Python
+    "ms-python.python",
+    "charliermarsh.ruff",
+    // ROS2
+    "Ranch-Hand-Robotics.rde-pack",
+    "Ranch-Hand-Robotics.rde-ros-2",
+    "Ranch-Hand-Robotics.urdf-editor",
+    // Others
+    "redhat.vscode-yaml",
+    "redhat.vscode-xml",
+    "cschlosser.doxdocgen",
+    "editorconfig.editorconfig"
+  ]
+}
